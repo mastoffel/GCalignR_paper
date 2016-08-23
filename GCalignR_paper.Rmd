@@ -1,0 +1,70 @@
+---
+title: 'GCalignR: An R package for aligning Gas-Chromatography data'
+author: Meinolf Ottensmann, Martin A. Stoffel, Barbara Casper, Joseph I. Hoffman
+date: "11/1/2015"
+output:
+  pdf_document:
+    fig_caption: yes
+    highlight: kate
+    keep_tex: yes
+    number_sections: yes
+  html_document:
+    fig_caption: yes
+    force_captions: yes
+    highlight: pygments
+    number_sections: yes
+    theme: cerulean
+  word_document: default
+bibliography: bibliography.bib
+---
+
+```{r, echo=FALSE, results='hide'}
+  # devtools::install_github("cboettig/knitcitations@v1")
+  library(knitcitations)
+  cleanbib()
+  cite_options(citation_format = "pandoc", check.entries=FALSE)
+  library(bibtex)
+``` 
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = TRUE) # warning = FALSE
+```
+
+
+# Abstract
+
+Metabolomics approaches such as Gas-Chromatography (GC) are increasingly used by researchers in
+ecology and evolution to study the chemical basis of animal communication. However, the statistical
+analysis of patterns across individuals requires the alignment of chemical data, which is inherently
+noisy due to subtle, random and often unavoidable variation of the GC machine parameters [@pierce2005classification]. We developed an R package, `GCalignR`, which provides easy-to-use
+function to align GC data in R and evaluate the quality of the alignment. 
+
+Key-words: GC-MS, chemical communication, olfactory communication, alignment
+
+	
+# Introduction
+
+Despite the existence of automated alignment algorithms [e.g. @smith2006xcms; @stein1999integrated; @robinson2007dynamic], most researchers in the relatively young fields of mammalian and avian chemical communication align chromatograms manually
+[@charpentier2008smelling; @setchell2010odour; @caspers2011scents; @leclaire2012semiochemical; @theis2013symbiotic] or identify all compounds prior to analysis [@whittaker2010songbird] rather than using automated alignment software. Depending on the
+sample size and the number of compounds present in the samples, manual alignment can take up to several weeks and might be biased due to subjective expectations of the researcher. 
+
+
+## Availability
+
+The latest version of `GCalignR` can be downloaded from GitHub.
+
+```{r, eval = FALSE}
+install.packages("devtools")
+devtools::install_github("mastoffel/GCalignR")
+```
+
+We welcome any contributions or feedback on the package.
+
+## Data accessibility
+
+
+## References
+
+
+
+
