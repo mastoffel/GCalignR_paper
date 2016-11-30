@@ -1,0 +1,45 @@
+---
+title: 'Supplementary for "GCalignR: An R package for aligning Gas-Chromatography data"'
+author: "Meinolf Ottensmann, Martin A. Stoffel, Barbara Caspers, Joseph I. Hoffman"
+date: '`r Sys.Date()`'
+output:
+  pdf_document:
+    fig_caption: yes
+    highlight: kate
+    keep_tex: yes
+    number_sections: yes
+  html_document:
+    fig_caption: yes
+    force_captions: yes
+    highlight: pygments
+    number_sections: yes
+    theme: cerulean
+  word_document: default
+bibliography: bibliography.bib
+---
+
+```{r, echo = FALSE, results = 'hide'}
+  # devtools::install_github("cboettig/knitcitations@v1")
+  library(knitcitations)
+  cleanbib()
+  cite_options(citation_format = "pandoc", check.entries = FALSE)
+  library(bibtex)
+``` 
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = TRUE) # warning = FALSE
+```
+## Literature review
+There are more than 53 000 hits when searching for *gas-chromatography* in Web of Science (24.11.2016). Most of them are issued in journals focussing on analytical sciences such as diverse fields in chemistry, food science or pharmacology. The focus of GCalignR is on applications were not the individual substance is of primary interest but rather patterns or chemical signatures. Hence, a literature review is conducted by considering articles published in the research area of ecology in the past ten years. The aim is to investigate the prevelance of manual alignments of gas-chromatography data. 
+
+### Journals
+
+* Animal Behaviour
+* Auk
+* Behavioral Ecology
+* Behavioral Ecology and Sociobiology
+* Ecology
+* Plos ONE
+* Zoology
+
+## References

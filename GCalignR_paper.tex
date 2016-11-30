@@ -13,7 +13,6 @@
     \usepackage{fontspec}
   \fi
   \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
 \fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -24,10 +23,9 @@
 }{}
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
-\PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
 \hypersetup{unicode=true,
             pdftitle={GCalignR: An R package for aligning Gas-Chromatography data},
-            pdfauthor={Meinolf Ottensmann, Martin A. Stoffel, Barbara Casper, Joseph I. Hoffman},
+            pdfauthor={Meinolf Ottensmann, Martin A. Stoffel, Barbara Caspers, Joseph I. Hoffman},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
@@ -78,12 +76,25 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
 
 %%% Use protect on footnotes to avoid problems with footnotes in titles
 \let\rmarkdownfootnote\footnote%
@@ -103,48 +114,44 @@
   \title{GCalignR: An R package for aligning Gas-Chromatography data}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-  \author{Meinolf Ottensmann, Martin A. Stoffel, Barbara Casper, Joseph I. Hoffman}
+  \author{Meinolf Ottensmann, Martin A. Stoffel, Barbara Caspers, Joseph I.
+Hoffman}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{11/1/2015}
+  \date{2016-11-25}
 
-
-
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
 
 \begin{document}
 \maketitle
 
+\begin{verbatim}
+## Skipping install of 'knitcitations' from a github remote, the SHA1 (8bc14b57) has not changed since last install.
+##   Use `force = TRUE` to force installation
+\end{verbatim}
+
 \section{Abstract}\label{abstract}
 
-Key-words: GC-MS, chemical communication, olfactory communication,
-alignment
+Key-words: GC-MS,gas-chromatography, chemical communication, olfactory
+communication, alignment
 
 \subsection{Introduction}\label{introduction}
 
-Metabolomics approaches such as Gas Chromatography (GC) and Gas
-Chromatography-Mass Spectrometry (GC-MS) are increasingly used by
-biologists to unravel the chemical basis of animal olfactory
-communication (citations). For the detection of broader patterns in
-chemical samples most researchers use an untargeted approach and analyse
-the whole spectrum of sampled chemicals rather than targeting specific
-compounds. However, chromatography data across multiple samples are not
-directly comparable as the retention times of peaks vary across samples
-due to subtle, random and often unavoidable variation of the GC-MS
-machine parameters (Pierce et al. 2005). For studies that seek to
-identify chemical patterns across samples it becomes essential to
-account for these retention time drifts by using an appropriate
-alignment method.
+\emph{Importance in Zoology} \emph{Increasing use of R}
+\emph{Reproducibility and Bias} Metabolomics approaches such as
+Gas-Chromatography (GC) and Gas Chromatography-Mass Spectrometry (GC-MS)
+are increasingly used by biologists to unravel the chemical basis of
+animal behaviour, such as olfactory communication or navigation
+(citations). For the detection of broader patterns in chemical samples
+most researchers use an untargeted approach and analyse the whole
+spectrum of sampled chemicals rather than targeting specific compounds.
+However, chromatography data across multiple samples are not directly
+comparable as the retention times of peaks vary across samples due to
+subtle, random and often unavoidable variation of the GC-MS machine
+parameters (Pierce et al. 2005). For studies that seek to identify
+chemical patterns across samples it becomes essential to account for
+these retention time drifts by using an appropriate alignment method.
 
 Despite the existence of automated alignment algorithms (e.g. Smith et
 al. 2006; Stein 1999; Robinson et al. 2007) (also gcaligner here), most
@@ -236,9 +243,7 @@ dataset}\label{explanation-of-example-dataset}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{check_input}\NormalTok{(}\DataTypeTok{data =} \NormalTok{peak_data,}\DataTypeTok{show_peaks =} \NormalTok{F) }\CommentTok{# If show_peaks = T, a histogram of peaks is plotted }
-\CommentTok{#> All checks passed!}
-\CommentTok{#> Ready for processing with align_chromatograms}
+\KeywordTok{check_input}\NormalTok{(}\DataTypeTok{data =} \NormalTok{peak_data,}\DataTypeTok{show_peaks =} \NormalTok{T, }\DataTypeTok{col=} \StringTok{"red"}\NormalTok{) }\CommentTok{# If show_peaks = T, a histogram of peaks is plotted }
 \end{Highlighting}
 \end{Shaded}
 
@@ -285,11 +290,14 @@ alignment}\label{evaluating-the-quality-of-the-alignment}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{gc_heatmap}\NormalTok{(aligned_peak_data,}\DataTypeTok{threshold =} \FloatTok{0.01}\NormalTok{, }\DataTypeTok{samples_subset =} \DecValTok{1}\NormalTok{:}\DecValTok{20}\NormalTok{, }\DataTypeTok{substance_subset =} \DecValTok{1}\NormalTok{:}\DecValTok{30}\NormalTok{, }\DataTypeTok{label_size =} \DecValTok{10}\NormalTok{) }\CommentTok{# By default a threshold of 0.05 is used to mark deviations}
+\KeywordTok{gc_heatmap}\NormalTok{(aligned_peak_data,}\DataTypeTok{threshold =} \FloatTok{0.01}\NormalTok{, }\DataTypeTok{samples_subset =} \DecValTok{1}\NormalTok{:}\DecValTok{20}\NormalTok{, }\DataTypeTok{substance_subset =} \DecValTok{1}\NormalTok{:}\DecValTok{30}\NormalTok{, }\DataTypeTok{label_size =} \DecValTok{10}\NormalTok{, }\DataTypeTok{type =} \StringTok{"continous"}\NormalTok{) }\CommentTok{# By default a threshold of 0.05 is used to mark deviations}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{GCalignR_paper_files/figure-latex/unnamed-chunk-8-1.pdf}
+\section{Algorithm}\label{algorithm}
+
+\section{Evaluation with empirical data and
+simulations}\label{evaluation-with-empirical-data-and-simulations}
 
 \subsection{Availability}\label{availability}
 
@@ -360,7 +368,7 @@ Identification.'' \emph{Analytical Chemistry} 78 (3). ACS Publications:
 
 \hypertarget{ref-stein1999integrated}{}
 Stein, Stephen E. 1999. ``An Integrated Method for Spectrum Extraction
-and Compound Identification from Gas Chromatography/mass Spectrometry
+and Compound Identification from Gas Chromatography/Mass Spectrometry
 Data.'' \emph{Journal of the American Society for Mass Spectrometry} 10
 (8). Elsevier: 770--81.
 
@@ -385,5 +393,6 @@ Milos V Novotny, and Ellen D Ketterson. 2010. ``Songbird Chemosignals:
 Volatile Compounds in Preen Gland Secretions Vary Among Individuals,
 Sexes, and Populations.'' \emph{Behavioral Ecology} 21 (3). ISBE:
 608--14.
+
 
 \end{document}
