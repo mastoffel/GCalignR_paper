@@ -15,14 +15,14 @@ output:
     number_sections: yes
     theme: cerulean
   word_document: default
-bibliography: bibliography.bib
+bibliography: bibliographyMO.bib
 ---
 
 ```{r, echo=FALSE, results='hide'}
-  devtools::install_github("cboettig/knitcitations@v1")
+  # devtools::install_github("cboettig/knitcitations@v1")
   library(knitcitations)
   cleanbib()
-  cite_options(citation_format = "pandoc", check.entries=FALSE)
+  cite_options(citation_format = "pandoc", check.entries = FALSE)
   library(bibtex)
 ``` 
 
@@ -38,26 +38,17 @@ Key-words: GC-MS,gas-chromatography, chemical communication, olfactory communica
 
 	
 ## Introduction
+Chemical cues are arguably the most common mode of communication in animals [@Wyatt.2014], where the role is evident in kin [@Porter.1981; @Krause.2012; @Gilad.2016] and mate recognition [@Martin.2008], mate-choice [@Penn.2002] or signalling genetic quality [@Charpentier.2010; @Stoffel.2015]. The investigation of chemical signatures requires the use of metabolomic approaches in order to characterise and compare the involved chemicals. Gas-chromatography is a widespread analytical mehthod to unravel the compostition of samples with high efficiency [@McNair.2011]. For the detection of broader patterns in chemical samples researchers use an untargeted approach and analyse the whole spectrum of sampled chemicals rather than targeting specific compounds. However, chromatography data across multiple samples are not directly comparable as they need to be aligned first. Furthermore the retention times of peaks vary across samples due to subtle, random and often unavoidable variation of the GC-MS machine parameters [@Pierce.2005]. For studies that seek to identify chemical patterns across samples it becomes essential to account for these retention time drifts by using an appropriate alignment method. A number of automated tools is available for two-dimensional chromatograms (LC-MS, GC-MS) which offer mass spectra in addition to retention times [@Pierce.2005; @Smith.2006; @Robinson.2007; @Luedemann.2008; @Koh.2010; @Jiang.2013; @Zhang.2012; @Niu.2014; @Smith.2015], while there is to our knowledge only one application specifically designed for the needs of one-dimensional chromatograms [@Dellicour.2013]. As a consequence, many researchers rely on a manual alignment of their data [@Charpentier.2010; @Caspers.2011;@Harris.2012]; (*Citations are critical. Because nothing is mentioned on alignment within papers*, cf. http://bit.ly/2gYJAZw). This approach bears three main drawbacks: (1) In large scale studies the task becomes a difficult and time consuming task. (2) Humans are prone to detect patterns in noise (some citation) which is why the researcher may bias the alignment due to subjective experience and expectations. (3) The data analytic pipeline from the raw gas-chromatography data to the results of the statistical analysis is not reproducible. 
+Here, we introduce `GCalignR`, a package developed in `R` [@RCoreTeam.2016], which provides a simple  and fast algorithm to align peaks from GC data and evaluate the quality of the alignment.`GCalignR` was specifically developed and tested as a preprocessing tool prior to the statistical analysis of chemical samples from animal skin and preen glands (see @Stoffel.2015 for an application of the underlying algorithm). The embedded  functions can easily be embedded in `Rmarkdown` documents [@Allaire.2016] to fullfil good standards of reproducibility [@Peng.2011]. Furthermore we demonstrate the easy integration of the R-packge `vegan`[@Oksanen.2016] into a solid workflow for multivariate analyses of chemical data. 
+
 *Importance in Zoology*
 *Increasing use of R*
 *Reproducibility and Bias*
-Metabolomics approaches such as Gas-Chromatography (GC) and Gas Chromatography-Mass Spectrometry (GC-MS) are increasingly used by biologists to unravel the chemical basis of animal behaviour, such as olfactory communication or navigation (citations). For the detection of broader patterns in chemical samples most researchers use an untargeted approach and analyse the whole spectrum of sampled chemicals rather than targeting specific compounds. However, 
-chromatography data across multiple samples are not directly comparable as the retention times of peaks
-vary across samples due to subtle, random and often unavoidable variation of the GC-MS machine parameters [@pierce2005classification]. For studies that seek to identify chemical patterns across samples it becomes essential to account for these retention time drifts by using an appropriate alignment method.
+*Use to align mutliple data sets together, if sampled under same conditions*
+. 
 
-Despite the existence of automated alignment algorithms [e.g. @smith2006xcms; @stein1999integrated; @robinson2007dynamic] (also gcaligner here), most researchers in the relatively young fields of mammalian and avian chemical communication align chromatograms manually [@charpentier2008smelling; @setchell2010odour; @caspers2011scents; @leclaire2012semiochemical; @theis2013symbiotic] or identify all compounds prior to analysis [@whittaker2010songbird] rather than using (semi-)automated alignment software. This approach yields three main drawbacks: (1) For larger sample sizes, the method is time intensive and can take up to several weeks. (2) Humans are prone to detect patterns in noise (some citation) which is why the researcher may bias the alignment due to subjective experience and expectations. (3) The data analytic pipeline from the raw GC data to the results of the statistical analysis is not reproducible. 
-
-Here, we introduce `GCalignR`, a package developed in R, which provides a simple means of aligning peaks from Gas Chromatography data and evaluate the quality of the alignment.  `GCalignR` was specifically developed and tested as a preprocessing tool prior to the statistical analysis of chemical samples from animal skin and preen glands [see @stoffel2015chemical for an application of the underlying algorithm]. The alignment functions can easily be embedded in reproducible research tools such as `Rmarkdown` (citation?) and piped as input into
-further statistical packages such as `vegan`.
 
 *Table*
-```{r}
-library(dplyr)
-library(knitr)
-library(DT)
-library(xtable)
-```
-
 # The package
 
 #### maybe a flowdiagram (package DiagramR) to illustrate the complete workflow ###
@@ -70,7 +61,7 @@ library(xtable)
 ## Data preprocessing 
 
 The statistical analysis of GC or GC-MS data is usually based on the detection of signal peaks within
-the chromatograms, which is can be done by proprietary software or free programs such as AMDIS [@stein1999integrated].
+the chromatograms, which is can be done by proprietary software or free programs such as AMDIS [@Stein.1999].
 The peak data of a chromatogramm usually contain the retention time of a given peak plus additional information such 
 as the area under the peak or its height which are used in the subsequent analysis. 
 `GCalignR` aligns peaks via their retention times (and not their mass-spectra, which may not be available, e.g. when 

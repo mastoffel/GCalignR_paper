@@ -120,16 +120,11 @@ Hoffman}
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-11-25}
+  \date{2016-12-02}
 
 
 \begin{document}
 \maketitle
-
-\begin{verbatim}
-## Skipping install of 'knitcitations' from a github remote, the SHA1 (8bc14b57) has not changed since last install.
-##   Use `force = TRUE` to force installation
-\end{verbatim}
 
 \section{Abstract}\label{abstract}
 
@@ -138,47 +133,59 @@ communication, alignment
 
 \subsection{Introduction}\label{introduction}
 
+Chemical cues are arguably the most common mode of communication in
+animals (Wyatt 2014), where the role is evident in kin (Porter and Moore
+1981; Krause et al. 2012; Gilad et al. 2016) and mate recognition
+(Martin, Helanterä, and Drijfhout 2008), mate-choice (Penn 2002) or
+signalling genetic quality (Charpentier et al. 2010; Stoffel et al.
+2015). The investigation of chemical signatures requires the use of
+metabolomic approaches in order to characterise and compare the involved
+chemicals. Gas-chromatography is a widespread analytical mehthod to
+unravel the compostition of samples with high efficiency (McNair and
+Miller 2011). For the detection of broader patterns in chemical samples
+researchers use an untargeted approach and analyse the whole spectrum of
+sampled chemicals rather than targeting specific compounds. However,
+chromatography data across multiple samples are not directly comparable
+as they need to be aligned first. Furthermore the retention times of
+peaks vary across samples due to subtle, random and often unavoidable
+variation of the GC-MS machine parameters (Pierce et al. 2005). For
+studies that seek to identify chemical patterns across samples it
+becomes essential to account for these retention time drifts by using an
+appropriate alignment method. A number of automated tools is available
+for two-dimensional chromatograms (LC-MS, GC-MS) which offer mass
+spectra in addition to retention times (Pierce et al. 2005; C. A. Smith
+et al. 2006; Robinson et al. 2007; Luedemann et al. 2008; Koh et al.
+2010; Jiang et al. 2013; Zhang et al. 2012; Niu et al. 2014; R. Smith,
+Ventura, and Prince 2015), while there is to our knowledge only one
+application specifically designed for the needs of one-dimensional
+chromatograms (Dellicour and Lecocq 2013). As a consequence, many
+researchers rely on a manual alignment of their data (Charpentier et al.
+2010; Caspers et al. 2011; Harris, Davies, and Nicol 2012);
+(\emph{Citations are critical. Because nothing is mentioned on alignment
+within papers}, cf.~\url{http://bit.ly/2gYJAZw}). This approach bears
+three main drawbacks: (1) In large scale studies the task becomes a
+difficult and time consuming task. (2) Humans are prone to detect
+patterns in noise (some citation) which is why the researcher may bias
+the alignment due to subjective experience and expectations. (3) The
+data analytic pipeline from the raw gas-chromatography data to the
+results of the statistical analysis is not reproducible. Here, we
+introduce \texttt{GCalignR}, a package developed in \texttt{R} (R Core
+Team 2016), which provides a simple and fast algorithm to align peaks
+from GC data and evaluate the quality of the alignment.\texttt{GCalignR}
+was specifically developed and tested as a preprocessing tool prior to
+the statistical analysis of chemical samples from animal skin and preen
+glands (see Stoffel et al. (2015) for an application of the underlying
+algorithm). The embedded functions can easily be embedded in
+\texttt{Rmarkdown} documents (Allaire et al. 2016) to fullfil good
+standards of reproducibility (Peng 2011). Furthermore we demonstrate the
+easy integration of the R-packge \texttt{vegan}(Oksanen et al. 2016)
+into a solid workflow for multivariate analyses of chemical data.
+
 \emph{Importance in Zoology} \emph{Increasing use of R}
-\emph{Reproducibility and Bias} Metabolomics approaches such as
-Gas-Chromatography (GC) and Gas Chromatography-Mass Spectrometry (GC-MS)
-are increasingly used by biologists to unravel the chemical basis of
-animal behaviour, such as olfactory communication or navigation
-(citations). For the detection of broader patterns in chemical samples
-most researchers use an untargeted approach and analyse the whole
-spectrum of sampled chemicals rather than targeting specific compounds.
-However, chromatography data across multiple samples are not directly
-comparable as the retention times of peaks vary across samples due to
-subtle, random and often unavoidable variation of the GC-MS machine
-parameters (Pierce et al. 2005). For studies that seek to identify
-chemical patterns across samples it becomes essential to account for
-these retention time drifts by using an appropriate alignment method.
+\emph{Reproducibility and Bias} \emph{Use to align mutliple data sets
+together, if sampled under same conditions} .
 
-Despite the existence of automated alignment algorithms (e.g. Smith et
-al. 2006; Stein 1999; Robinson et al. 2007) (also gcaligner here), most
-researchers in the relatively young fields of mammalian and avian
-chemical communication align chromatograms manually (Charpentier,
-Boulet, and Drea 2008; Setchell et al. 2010; Caspers et al. 2011;
-Leclaire et al. 2012; Theis et al. 2013) or identify all compounds prior
-to analysis (Whittaker et al. 2010) rather than using (semi-)automated
-alignment software. This approach yields three main drawbacks: (1) For
-larger sample sizes, the method is time intensive and can take up to
-several weeks. (2) Humans are prone to detect patterns in noise (some
-citation) which is why the researcher may bias the alignment due to
-subjective experience and expectations. (3) The data analytic pipeline
-from the raw GC data to the results of the statistical analysis is not
-reproducible.
-
-Here, we introduce \texttt{GCalignR}, a package developed in R, which
-provides a simple means of aligning peaks from Gas Chromatography data
-and evaluate the quality of the alignment. \texttt{GCalignR} was
-specifically developed and tested as a preprocessing tool prior to the
-statistical analysis of chemical samples from animal skin and preen
-glands (see Stoffel et al. 2015 for an application of the underlying
-algorithm). The alignment functions can easily be embedded in
-reproducible research tools such as \texttt{Rmarkdown} (citation?) and
-piped as input into further statistical packages such as \texttt{vegan}.
-
-\section{The package}\label{the-package}
+\emph{Table} \# The package
 
 \paragraph{maybe a flowdiagram (package DiagramR) to illustrate the
 complete
@@ -318,81 +325,165 @@ We welcome any contributions or feedback on the package.
 \addcontentsline{toc}{subsection}{References}
 
 \hypertarget{refs}{}
-\hypertarget{ref-caspers2011scents}{}
-Caspers, Barbara A, Frank C Schroeder, Stephan Franke, and Christian C
-Voigt. 2011. ``Scents of Adolescence: The Maturation of the Olfactory
-Phenotype in a Free-Ranging Mammal.'' \emph{PloS One} 6 (6). Public
-Library of Science: e21162.
+\hypertarget{ref-Allaire.2016}{}
+Allaire, J. J., Joe Cheng, Yihui Xie, Jonathan McPherson, Winston Chang,
+Jeff Allen, Hadley Wickham, Aron Atkins, and Rob Hyndman. 2016.
+``Rmarkdown: Dynamic Documents for R.''
+\url{https://CRAN.R-project.org/package=rmarkdown}.
 
-\hypertarget{ref-charpentier2008smelling}{}
-Charpentier, Marie JE, MarylENe Boulet, and Christine M Drea. 2008.
-``Smelling Right: The Scent of Male Lemurs Advertises Genetic Quality
-and Relatedness.'' \emph{Molecular Ecology} 17 (14). Wiley Online
-Library: 3225--33.
+\hypertarget{ref-Caspers.2011}{}
+Caspers, Barbara A., Frank C. Schroeder, Stephan Franke, and Christian
+C. Voigt. 2011. ``Scents of Adolescence: The Maturation of the Olfactory
+Phenotype in a Free-Ranging Mammal.'' \emph{PloS One} 6 (6): e21162.
 
-\hypertarget{ref-leclaire2012semiochemical}{}
-Leclaire, Sarah, Thomas Merkling, Christine Raynaud, Hervé Mulard,
-Jean-Marie Bessière, Émeline Lhuillier, Scott A Hatch, and Étienne
-Danchin. 2012. ``Semiochemical Compounds of Preen Secretion Reflect
-Genetic Make-up in a Seabird Species.'' \emph{Proceedings of the Royal
-Society of London B: Biological Sciences} 279 (1731). The Royal Society:
-1185--93.
+\hypertarget{ref-Charpentier.2010}{}
+Charpentier, Marie J.E., Jeremy Chase Crawford, Marylène Boulet, and
+Christine M. Drea. 2010. ``Message `Scent': Lemurs Detect the Genetic
+Relatedness and Quality of Conspecifics via Olfactory Cues.''
+\emph{Animal Behaviour} 80 (1): 101--8.
+doi:\href{https://doi.org/10.1016/j.anbehav.2010.04.005}{10.1016/j.anbehav.2010.04.005}.
 
-\hypertarget{ref-pierce2005classification}{}
-Pierce, Karisa M, Janiece L Hope, Kevin J Johnson, Bob W Wright, and
-Robert E Synovec. 2005. ``Classification of Gasoline Data Obtained by
+\hypertarget{ref-Dellicour.2013}{}
+Dellicour, Simon, and Thomas Lecocq. 2013. ``GCALIGNER 1.0: An Alignment
+Program to Compute a Multiple Sample Comparison Data Matrix from Large
+Eco-Chemical Datasets Obtained by Gc.'' \emph{Journal of Separation
+Science} 36 (19): 3206--9.
+doi:\href{https://doi.org/10.1002/jssc.201300388}{10.1002/jssc.201300388}.
+
+\hypertarget{ref-Gilad.2016}{}
+Gilad, Oranit, Ronald R. Swaisgood, Megan A. Owen, and Xiaoping Zhou.
+2016. ``Giant Pandas Use Odor Cues to Discriminate Kin from Nonkin.''
+\emph{Current Zoology} 62 (4): 333--36.
+doi:\href{https://doi.org/10.1093/cz/zow025}{10.1093/cz/zow025}.
+
+\hypertarget{ref-Harris.2012}{}
+Harris, Rachel L., Noel W. Davies, and Stewart C. Nicol. 2012.
+``Chemical Composition of Odorous Secretions in the Tasmanian
+Short-Beaked Echidna (Tachyglossus Aculeatus Setosus).'' \emph{Chemical
+Senses} 37 (9): 819--36.
+doi:\href{https://doi.org/10.1093/chemse/bjs066}{10.1093/chemse/bjs066}.
+
+\hypertarget{ref-Jiang.2013}{}
+Jiang, Wei, Zhi-Min Zhang, YongHuan Yun, De-Jian Zhan, Yi-Bao Zheng,
+Yi-Zeng Liang, Zhen Yu Yang, and Ling Yu. 2013. ``Comparisons of Five
+Algorithms for Chromatogram Alignment.'' \emph{Chromatographia} 76
+(17-18): 1067--78.
+doi:\href{https://doi.org/10.1007/s10337-013-2513-8}{10.1007/s10337-013-2513-8}.
+
+\hypertarget{ref-Koh.2010}{}
+Koh, Yueting, Kishore Kumar Pasikanti, Chun Wei Yap, and Eric Chun Yong
+Chan. 2010. ``Comparative Evaluation of Software for Retention Time
+Alignment of Gas Chromatography/Time-of-Flight Mass Spectrometry-Based
+Metabonomic Data.'' \emph{Journal of Chromatography. A} 1217 (52):
+8308--16.
+doi:\href{https://doi.org/10.1016/j.chroma.2010.10.101}{10.1016/j.chroma.2010.10.101}.
+
+\hypertarget{ref-Krause.2012}{}
+Krause, E. Tobias, Oliver Krüger, Philip Kohlmeier, and Barbara A.
+Caspers. 2012. ``Olfactory Kin Recognition in a Songbird.''
+\emph{Biology Letters} 8 (3): 327--29.
+
+\hypertarget{ref-Luedemann.2008}{}
+Luedemann, Alexander, Katrin Strassburg, Alexander Erban, and Joachim
+Kopka. 2008. ``TagFinder for the Quantitative Analysis of Gas
+Chromatography--mass Spectrometry (Gc-Ms)-Based Metabolite Profiling
+Experiments.'' \emph{Bioinformatics (Oxford, England)} 24 (5): 732--37.
+doi:\href{https://doi.org/10.1093/bioinformatics/btn023}{10.1093/bioinformatics/btn023}.
+
+\hypertarget{ref-Martin.2008}{}
+Martin, Stephen J., Heikki Helanterä, and Falko P. Drijfhout. 2008.
+``Evolution of Species-Specific Cuticular Hydrocarbon Patterns in
+Formica Ants.'' \emph{Biological Journal of the Linnean Society} 95 (1):
+131--40.
+doi:\href{https://doi.org/10.1111/j.1095-8312.2008.01038.x}{10.1111/j.1095-8312.2008.01038.x}.
+
+\hypertarget{ref-McNair.2011}{}
+McNair, Harold M., and James M. Miller. 2011. \emph{Basic Gas
+Chromatography}. John Wiley \& Sons.
+
+\hypertarget{ref-Niu.2014}{}
+Niu, Weihuan, Elisa Knight, Qingyou Xia, and Brian D. McGarvey. 2014.
+``Comparative Evaluation of Eight Software Programs for Alignment of Gas
+Chromatography-Mass Spectrometry Chromatograms in Metabolomics
+Experiments.'' \emph{Journal of Chromatography. A} 1374: 199--206.
+doi:\href{https://doi.org/10.1016/j.chroma.2014.11.005}{10.1016/j.chroma.2014.11.005}.
+
+\hypertarget{ref-Oksanen.2016}{}
+Oksanen, Jari, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt,
+Pierre Legendre, Dan McGlinn, Peter R. Minchin, et al. 2016. ``Vegan:
+Community Ecology Package.''
+\url{https://CRAN.R-project.org/package=vegan}.
+
+\hypertarget{ref-Peng.2011}{}
+Peng, Roger D. 2011. ``Reproducible Research in Computational Science.''
+\emph{Science (New York, N.Y.)} 334 (6060): 1226--7.
+doi:\href{https://doi.org/10.1126/science.1213847}{10.1126/science.1213847}.
+
+\hypertarget{ref-Penn.2002}{}
+Penn, Dustin J. 2002. ``The Scent of Genetic Compatibility: Sexual
+Selection and the Major Histocompatibility Complex.'' \emph{Ethology}
+108 (1): 1--21.
+doi:\href{https://doi.org/10.1046/j.1439-0310.2002.00768.x}{10.1046/j.1439-0310.2002.00768.x}.
+
+\hypertarget{ref-Pierce.2005}{}
+Pierce, Karisa M., Janiece L. Hope, Kevin J. Johnson, Bob W. Wright, and
+Robert E. Synovec. 2005. ``Classification of Gasoline Data Obtained by
 Gas Chromatography Using a Piecewise Alignment Algorithm Combined with
 Feature Selection and Principal Component Analysis.'' \emph{Journal of
-Chromatography A} 1096 (1). Elsevier: 101--10.
+Chromatography A} 1096 (1): 101--10.
 
-\hypertarget{ref-robinson2007dynamic}{}
-Robinson, Mark D, David P De Souza, Woon W Keen, Eleanor C Saunders,
-Malcolm J McConville, Terence P Speed, and Vladimir A Likić. 2007. ``A
-Dynamic Programming Approach for the Alignment of Signal Peaks in
+\hypertarget{ref-Porter.1981}{}
+Porter, R., and J. Moore. 1981. ``Human Kin Recognition by Olfactory
+Cues☆.'' \emph{Physiology \& Behavior} 27 (3): 493--95.
+doi:\href{https://doi.org/10.1016/0031-9384(81)90337-1}{10.1016/0031-9384(81)90337-1}.
+
+\hypertarget{ref-RCoreTeam.2016}{}
+R Core Team. 2016. ``R: A Language and Environment for Statistical
+Computing.'' Vienna, Austria: R Foundation for Statistical Computing.
+\url{https://www.R-project.org/}.
+
+\hypertarget{ref-Robinson.2007}{}
+Robinson, Mark D., David P. de Souza, Woon W. Keen, Eleanor C. Saunders,
+Malcolm J. McConville, Terence P. Speed, and Vladimir A. Likić. 2007.
+``A Dynamic Programming Approach for the Alignment of Signal Peaks in
 Multiple Gas Chromatography-Mass Spectrometry Experiments.'' \emph{BMC
-Bioinformatics} 8 (1). BioMed Central Ltd: 419.
+Bioinformatics} 8 (1): 419.
 
-\hypertarget{ref-setchell2010odour}{}
-Setchell, Joanna M, Stefano Vaglio, Kristin M Abbott, Jacopo
-Moggi-Cecchi, Francesca Boscaro, Giuseppe Pieraccini, and Leslie A
-Knapp. 2010. ``Odour Signals Major Histocompatibility Complex Genotype
-in an Old World Monkey.'' \emph{Proceedings of the Royal Society of
-London B: Biological Sciences}. The Royal Society, rspb20100571.
-
-\hypertarget{ref-smith2006xcms}{}
-Smith, Colin A, Elizabeth J Want, Grace O'Maille, Ruben Abagyan, and
+\hypertarget{ref-Smith.2006}{}
+Smith, Colin A., Elizabeth J. Want, Grace O'Maille, Ruben Abagyan, and
 Gary Siuzdak. 2006. ``XCMS: Processing Mass Spectrometry Data for
 Metabolite Profiling Using Nonlinear Peak Alignment, Matching, and
-Identification.'' \emph{Analytical Chemistry} 78 (3). ACS Publications:
-779--87.
+Identification.'' \emph{Analytical Chemistry} 78 (3): 779--87.
 
-\hypertarget{ref-stein1999integrated}{}
+\hypertarget{ref-Smith.2015}{}
+Smith, Rob, Dan Ventura, and John T. Prince. 2015. ``LC-Ms Alignment in
+Theory and Practice: A Comprehensive Algorithmic Review.''
+\emph{Briefings in Bioinformatics} 16 (1): 104--17.
+doi:\href{https://doi.org/10.1093/bib/bbt080}{10.1093/bib/bbt080}.
+
+\hypertarget{ref-Stein.1999}{}
 Stein, Stephen E. 1999. ``An Integrated Method for Spectrum Extraction
 and Compound Identification from Gas Chromatography/Mass Spectrometry
 Data.'' \emph{Journal of the American Society for Mass Spectrometry} 10
-(8). Elsevier: 770--81.
+(8): 770--81.
 
-\hypertarget{ref-stoffel2015chemical}{}
-Stoffel, Martin A, Barbara A Caspers, Jaume Forcada, Athina Giannakara,
-Markus Baier, Luke Eberhart-Phillips, Caroline Müller, and Joseph I
-Hoffman. 2015. ``Chemical Fingerprints Encode Mother--offspring
-Similarity, Colony Membership, Relatedness, and Genetic Quality in Fur
-Seals.'' \emph{Proceedings of the National Academy of Sciences} 112
-(36). National Acad Sciences: E5005--E5012.
+\hypertarget{ref-Stoffel.2015}{}
+Stoffel, Martin A., Barbara A. Caspers, Jaume Forcada, Athina
+Giannakara, Markus Baier, Luke Eberhart-Phillips, Caroline Müller, and
+Joseph I. Hoffman. 2015. ``Chemical Fingerprints Encode
+Mother--offspring Similarity, Colony Membership, Relatedness, and
+Genetic Quality in Fur Seals.'' \emph{Proceedings of the National
+Academy of Sciences} 112 (36): E5005--E5012.
 
-\hypertarget{ref-theis2013symbiotic}{}
-Theis, Kevin R, Arvind Venkataraman, Jacquelyn A Dycus, Keith D Koonter,
-Emily N Schmitt-Matzen, Aaron P Wagner, Kay E Holekamp, and Thomas M
-Schmidt. 2013. ``Symbiotic Bacteria Appear to Mediate Hyena Social
-Odors.'' \emph{Proceedings of the National Academy of Sciences} 110
-(49). National Acad Sciences: 19832--7.
+\hypertarget{ref-Wyatt.2014}{}
+Wyatt, Tristram D. 2014. \emph{Pheromones and Animal Behavior: Chemical
+Signals and Signatures}. Cambridge University Press.
 
-\hypertarget{ref-whittaker2010songbird}{}
-Whittaker, Danielle J, Helena A Soini, Jonathan W Atwell, Craig Hollars,
-Milos V Novotny, and Ellen D Ketterson. 2010. ``Songbird Chemosignals:
-Volatile Compounds in Preen Gland Secretions Vary Among Individuals,
-Sexes, and Populations.'' \emph{Behavioral Ecology} 21 (3). ISBE:
-608--14.
+\hypertarget{ref-Zhang.2012}{}
+Zhang, Zhi-Min, Yi-Zeng Liang, Hong-Mei Lu, Bin-Bin Tan, Xiao-Na Xu, and
+Miguel Ferro. 2012. ``Multiscale Peak Alignment for Chromatographic
+Datasets.'' \emph{Journal of Chromatography. A} 1223: 93--106.
+doi:\href{https://doi.org/10.1016/j.chroma.2011.12.047}{10.1016/j.chroma.2011.12.047}.
 
 
 \end{document}

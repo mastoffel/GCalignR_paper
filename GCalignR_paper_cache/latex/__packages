@@ -4,3 +4,7 @@ bibtex
 GCalignR
 ggplot2
 gridExtra
+dplyr
+knitr
+DT
+xtable

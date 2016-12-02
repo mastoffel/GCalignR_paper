@@ -7,39 +7,86 @@ output:
     fig_caption: yes
     highlight: kate
     keep_tex: yes
-    number_sections: yes
+    number_sections: no
   html_document:
     fig_caption: yes
     force_captions: yes
     highlight: pygments
-    number_sections: yes
+    number_sections: no
     theme: cerulean
   word_document: default
-bibliography: bibliography.bib
+bibliography: bibliographyMO.bib
 ---
 
 ```{r, echo = FALSE, results = 'hide'}
-  # devtools::install_github("cboettig/knitcitations@v1")
   library(knitcitations)
   cleanbib()
   cite_options(citation_format = "pandoc", check.entries = FALSE)
   library(bibtex)
+  library(pander)
+``` 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = FALSE) 
+```
+## Published alignment tools for gas-chromatography
+There is a small number of alignment procedures that are available to handle gas-chromatography data *without* the aid of additional information about mass spectra which require the use of GC-MS as analytical pathway.
+
+```{r, echo=FALSE,results='asis'}
+table_1 <- read.csv("data/Published Tools.csv",header = T, skip = 1, sep = ";")
+pandoc.table(na.omit(table_1), style = "multiline", caption = "Peer-reviewed alignment tools for gas-chromatography data. Note: Unlisted are programs using mass-spectra of GC-MS runs",split.table = Inf)
+```
+
+## Testing GCalignR with published data 
+
+@Dellicour.2013 present data for three North America bumble bee species *Bombus bimaculatus*, *B. ephippiatus* and
+*B. flavifrons*. Samples represent cephalic labial gland secretions and are supposed to show species specific patterns. Hence, this in an ideal data set to test both (i) the alignment efficiency of **GCalignR** and (ii) the functionality to explore similarity patterns by multidimensional scaling within one pipeline in **R**.
+
+```{r, results = "asis"}
+library(GCalignR)
+check_input(data = "data/d1/Table_S1_raw.txt")
 ``` 
 
-```{r, echo = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = TRUE) # warning = FALSE
+Sample *BEPH06* is malformed. The last substance has not retention time and needs to be exluded from the data set. This is an error in the supporting information of the paper.
+
+```{r, eval = F, results = 'asis'}
+check_input(data = "data/d1/Table_S1_cleaned.txt")
+aligned <- align_chromatograms(data = "data/d1/Table_S1_raw.txt",
+                    conc_col_name = "Area",
+                    max_diff_peak2mean = 0.04,
+                    min_diff_peak2peak = 2/60,
+                    rt_col_name = "RT",
+                    delete_single_peak = F,
+                    merge_rare_peaks = F)
+save(aligned, file = "data/d1/Table_S1_aligned.RData")
 ```
-## Literature review
-There are more than 53 000 hits when searching for *gas-chromatography* in Web of Science (24.11.2016). Most of them are issued in journals focussing on analytical sciences such as diverse fields in chemistry, food science or pharmacology. The focus of GCalignR is on applications were not the individual substance is of primary interest but rather patterns or chemical signatures. Hence, a literature review is conducted by considering articles published in the research area of ecology in the past ten years. The aim is to investigate the prevelance of manual alignments of gas-chromatography data. 
+```{r}
+# aligned data
+load(file = "data/d1/Table_S1_aligned.RData")
+# factors
+factors <- read.csv("data/d1/Table_S1_factors.csv",sep = ";")
+row.names(factors) <- factors[["ID"]]
+```
 
-### Journals
+@Dellicour.2013 validated the alignment of their tool by GC-MS. For *B. flavifrons* they report a low error rate of 0.3 %. Hence, this data set is a good source to explore acceptable variation among retention times that are mapped to the same substance. 
 
-* Animal Behaviour
-* Auk
-* Behavioral Ecology
-* Behavioral Ecology and Sociobiology
-* Ecology
-* Plos ONE
-* Zoology
+```{r}
+t2 <- read.csv("data/d1/Table_S2_modified.txt", skip = 1, sep = "\t", header = FALSE)
+# get the retention times
+t2 <- t2[3:61,seq(1,31,3)]
+t2 <- apply(t2, MARGIN = 2, as.numeric)
+t2 <- data.frame(rt = rowMeans(t2, na.rm = T), var = apply(t2, 1, var, na.rm = T), range = apply(t2,1, function(x) max(x) - min(x))) 
+```
+## NMDS
+```{r}
+scent <- norm_peaks(aligned,conc_col_name = "Area",rt_col_name = "RT",out = "data.frame")
+scent <- log(scent + 1) 
+library(vegan)
+scent <- scent[match(row.names(factors),row.names(scent)),] 
+scent_nmds <- vegan::metaMDS(comm = scent) 
+scent_nmds <- as.data.frame(scent_nmds$points) 
+scent_nmds <- cbind(scent_nmds,Species = factors[["Species"]])  
+ggplot2::ggplot(data = scent_nmds,ggplot2::aes(MDS1,MDS2,color = Species)) +
+    ggplot2::geom_point(size = 4) + ggplot2::stat_ellipse(size = 2) + ggplot2::labs(title = "", x = "MDS1", y = "MDS2") + ggplot2::theme_void()
+```
 
 ## References
