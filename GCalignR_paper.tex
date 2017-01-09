@@ -160,20 +160,20 @@ Ventura, and Prince 2015), while there is to our knowledge only one
 application specifically designed for the needs of one-dimensional
 chromatograms (Dellicour and Lecocq 2013). As a consequence, many
 researchers rely on a manual alignment of their data (Charpentier et al.
-2010; Caspers et al. 2011; Harris, Davies, and Nicol 2012);
-(\emph{Citations are critical. Because nothing is mentioned on alignment
-within papers}, cf.~\url{http://bit.ly/2gYJAZw}). This approach bears
-three main drawbacks: (1) In large scale studies the task becomes a
-difficult and time consuming task. (2) Humans are prone to detect
-patterns in noise (some citation) which is why the researcher may bias
-the alignment due to subjective experience and expectations. (3) The
-data analytic pipeline from the raw gas-chromatography data to the
-results of the statistical analysis is not reproducible. Here, we
-introduce \texttt{GCalignR}, a package developed in \texttt{R} (R Core
-Team 2016), which provides a simple and fast algorithm to align peaks
-from GC data and evaluate the quality of the alignment.\texttt{GCalignR}
-was specifically developed and tested as a preprocessing tool prior to
-the statistical analysis of chemical samples from animal skin and preen
+2010; Caspers et al. 2011; Harris, Davies, and Nicol 2012); (Citations
+are critical. Because nothing is mentioned on alignment within papers,
+cf.~\url{http://bit.ly/2gYJAZw}). This approach bears three main
+drawbacks: (1) In large scale studies the task becomes a difficult and
+time consuming task. (2) Humans are prone to detect patterns in noise
+(some citation) which is why the researcher may bias the alignment due
+to subjective experience and expectations. (3) The data analytic
+pipeline from the raw gas-chromatography data to the results of the
+statistical analysis is not reproducible. Here, we introduce
+\texttt{GCalignR}, a package developed in \texttt{R} (R Core Team 2016),
+which provides a simple and fast algorithm to align peaks from GC data
+and evaluate the quality of the alignment.\texttt{GCalignR} was
+specifically developed and tested as a preprocessing tool prior to the
+statistical analysis of chemical samples from animal skin and preen
 glands (see Stoffel et al. (2015) for an application of the underlying
 algorithm). The embedded functions can easily be embedded in
 \texttt{Rmarkdown} documents (Allaire et al. 2016) to fullfil good
@@ -181,11 +181,10 @@ standards of reproducibility (Peng 2011). Furthermore we demonstrate the
 easy integration of the R-packge \texttt{vegan}(Oksanen et al. 2016)
 into a solid workflow for multivariate analyses of chemical data.
 
-\emph{Importance in Zoology} \emph{Increasing use of R}
-\emph{Reproducibility and Bias} \emph{Use to align mutliple data sets
-together, if sampled under same conditions} .
+Use to align mutliple data sets together, if sampled under same
+conditions
 
-\emph{Table} \# The package
+\section{The package}\label{the-package}
 
 \paragraph{maybe a flowdiagram (package DiagramR) to illustrate the
 complete

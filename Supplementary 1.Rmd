@@ -1,6 +1,6 @@
 ---
 title: 'Supplementary for "GCalignR: An R package for aligning Gas-Chromatography data"'
-author: "Meinolf Ottensmann, Martin A. Stoffel, Barbara Caspers, Joseph I. Hoffman"
+author: "Meinolf Ottensmann, Martin A. Stoffel and Joseph I. Hoffman"
 date: '`r Sys.Date()`'
 output:
   pdf_document:
@@ -19,74 +19,192 @@ bibliography: bibliographyMO.bib
 ---
 
 ```{r, echo = FALSE, results = 'hide'}
-  library(knitcitations)
+library(knitcitations)
   cleanbib()
   cite_options(citation_format = "pandoc", check.entries = FALSE)
   library(bibtex)
   library(pander)
 ``` 
+
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = FALSE) 
 ```
-## Published alignment tools for gas-chromatography
-There is a small number of alignment procedures that are available to handle gas-chromatography data *without* the aid of additional information about mass spectra which require the use of GC-MS as analytical pathway.
 
-```{r, echo=FALSE,results='asis'}
-table_1 <- read.csv("data/Published Tools.csv",header = T, skip = 1, sep = ";")
-pandoc.table(na.omit(table_1), style = "multiline", caption = "Peer-reviewed alignment tools for gas-chromatography data. Note: Unlisted are programs using mass-spectra of GC-MS runs",split.table = Inf)
+This document provides all code necessary code to run all relevant analyses presented in our paper. The *Rmarkdown* file as well as the data are best
+accessed by downloading this [GitHub](https://github.com/mastoffel/GCalignR_paper) repository. 
+
+## Prerequisites
+A couple of packages need to be available during the **R** session to produce all analyses and plots:
+```{r, results='hide'}
+# if packages are not installed, load them from CRAN
+wants <- c("vegan","ggplot2","gridExtra","grid")
+has   <- wants %in% rownames(installed.packages())
+if (any(!has)) install.packages(wants[!has])
+library(GCalignR)  
+library(ggplot2)
+library(vegan)
+library(gridExtra)
+library(grid)
 ```
 
-## Testing GCalignR with published data 
 
-@Dellicour.2013 present data for three North America bumble bee species *Bombus bimaculatus*, *B. ephippiatus* and
-*B. flavifrons*. Samples represent cephalic labial gland secretions and are supposed to show species specific patterns. Hence, this in an ideal data set to test both (i) the alignment efficiency of **GCalignR** and (ii) the functionality to explore similarity patterns by multidimensional scaling within one pipeline in **R**.
+## Data
+We demonstrate the usage of `GcalignR` with two empirical data sets. A more detailed workthrough tutorial is given in the \href{../doc/GCalignR_step_by_step.html}{vignette}. 
+
+### Bumble bee cephalic secretions
+
+@Dellicour.2013 present data for three North America bumble bee species *Bombus bimaculatus*, *B. ephippiatus* and *B. flavifrons*. Samples represent cephalic labial gland secretions and are supposed to show species specific patterns [@Meulemeester.2011]. Hence, this in an ideal data set to test both (i) the alignment efficiency of **GCalignR** and (ii) the functionality to explore similarity patterns by multidimensional scaling within one pipeline in **R**. The chromatogram data was extracted from Table S1 of [@Dellicour.2013] and can be downloaded here: {http://onlinelibrary.wiley.com/store/10.1002/jssc.201300388/asset/supinfo/jssc3437-sup-0001-TableS1.zip?v=1&s=57d5d58273d1d4207e70c72cecd5bba4b1fe95a1}{Supporting information}. We prepared a table that links each sample to the corresponding species.
 
 ```{r, results = "asis"}
-library(GCalignR)
-check_input(data = "data/d1/Table_S1_raw.txt")
+## Load factors
+bee_factors <- read.csv("data/d1/Table_S1_factors.csv",sep = ";")
+row.names(bee_factors) <- bee_factors[["ID"]]
+# In total 55 samples are available
+pander::pandoc.table(bee_factors[c(1:2,25:26,45:46),], caption = "Factors for Bumble bee data")
 ``` 
 
-Sample *BEPH06* is malformed. The last substance has not retention time and needs to be exluded from the data set. This is an error in the supporting information of the paper.
-
-```{r, eval = F, results = 'asis'}
-check_input(data = "data/d1/Table_S1_cleaned.txt")
-aligned <- align_chromatograms(data = "data/d1/Table_S1_raw.txt",
-                    conc_col_name = "Area",
-                    max_diff_peak2mean = 0.04,
-                    min_diff_peak2peak = 2/60,
-                    rt_col_name = "RT",
-                    delete_single_peak = F,
-                    merge_rare_peaks = F)
-save(aligned, file = "data/d1/Table_S1_aligned.RData")
-```
+Prior to excecuting any alignment, the conformity of the data with the requirements of `GCalignR`is tested "behind the scenes". Nonetheless, this can be invoked manually by calling the function `check_input`.
 ```{r}
-# aligned data
-load(file = "data/d1/Table_S1_aligned.RData")
-# factors
-factors <- read.csv("data/d1/Table_S1_factors.csv",sep = ";")
-row.names(factors) <- factors[["ID"]]
+check_input(data = "data/d1/Table_S1_raw.txt")
 ```
+The output reveals that sample *BEPH06* is malformed. The last row contains both area and relative area but no retention time. It is unclear what this represents. The respective row is removed from the file we are going to use afterwards.
 
-@Dellicour.2013 validated the alignment of their tool by GC-MS. For *B. flavifrons* they report a low error rate of 0.3 %. Hence, this data set is a good source to explore acceptable variation among retention times that are mapped to the same substance. 
+### Antarctic fur seal *Arctocephalus gazella* skin swabs
+The second data set is comprised of skin swabs of 41 mother-pup pairs of Antarctic fur seals *Arctocephalus gazella* which among other things were shown to encode the membership to a breeding colony [@Stoffel.2015]. These data are distributed with our package and available as the list \code{peak_data} with corresponding factors \code{peak_factors}
 
 ```{r}
-t2 <- read.csv("data/d1/Table_S2_modified.txt", skip = 1, sep = "\t", header = FALSE)
-# get the retention times
-t2 <- t2[3:61,seq(1,31,3)]
-t2 <- apply(t2, MARGIN = 2, as.numeric)
-t2 <- data.frame(rt = rowMeans(t2, na.rm = T), var = apply(t2, 1, var, na.rm = T), range = apply(t2,1, function(x) max(x) - min(x))) 
+# chemical data
+data("peak_data")
+# corresponding factors
+data("peak_factors")
+pander::pandoc.table(head(peak_factors), caption = "Factors for Seal data")
 ```
-## NMDS
+
+## Alignment
+* Aligning the bumblee bee data
+
+```{r, eval = FALSE, results = 'hide'}
+bumble_bee_aligned <- align_chromatograms(data = "data/bumblee_bee_input.txt",
+                                   conc_col_name = "Area",
+                                   max_diff_peak2mean = 0.02,
+                                   min_diff_peak2peak = 0.05,
+                                   max_linear_shift = 0.05,
+                                   rt_col_name = "RT",
+                                   delete_single_peak = T)
+save(bumble_bee_aligned, file = "data/bumble_bee_aligned.RData")
+```
 ```{r}
-scent <- norm_peaks(aligned,conc_col_name = "Area",rt_col_name = "RT",out = "data.frame")
-scent <- log(scent + 1) 
-library(vegan)
-scent <- scent[match(row.names(factors),row.names(scent)),] 
-scent_nmds <- vegan::metaMDS(comm = scent) 
-scent_nmds <- as.data.frame(scent_nmds$points) 
-scent_nmds <- cbind(scent_nmds,Species = factors[["Species"]])  
-ggplot2::ggplot(data = scent_nmds,ggplot2::aes(MDS1,MDS2,color = Species)) +
-    ggplot2::geom_point(size = 4) + ggplot2::stat_ellipse(size = 2) + ggplot2::labs(title = "", x = "MDS1", y = "MDS2") + ggplot2::theme_void()
+# The alignment was performed in 3:30 minutes.
+load(file = "data/bumble_bee_aligned.RData")
 ```
+
+* Aligning the fur seal data
+
+```{r, eval = FALSE, results = 'hide'}
+seal_aligned <- align_chromatograms(data = peak_data,
+                    conc_col_name = "area",
+                    max_diff_peak2mean = 0.02,
+                    min_diff_peak2peak = 0.05,
+                    rt_col_name = "time",
+                    delete_single_peak = T,
+                    blanks = c("C2","C3"),
+                    rt_cutoff_low = 8,
+                    iterations = 1)
+save(seal_aligned, file = "seal_aligned.RData")
+```
+```{r}
+# The computation took 24:59 Minutes
+load(file = "data/d1/seal_aligned.RData")
+```
+
+## Inspect the aligned data
+* Heatmaps show the distribution of peaks and can highlight deviations
+```{r}
+plot.bee1 <- gc_heatmap(bumble_bee_aligned, threshold = 0.07, main_title = paste("Bumblee bee data"),
+                        label = F)
+plot.seal1 <- gc_heatmap(seal_aligned, threshold = 0.07, main_title = "Fur seal data",
+                         label = F, show_legend = F)
+heatmaps <- gridExtra::grid.arrange(plot.bee1,plot.seal1)
+grid::grid.newpage()
+grid::grid.draw(heatmaps)
+```
+* Diagnostic plots aid in finetuning of the alignment
+```{r}
+plot(seal_aligned)
+```
+
+* Exploring species similarites with non-metric multidimensional scaling (NMDS) 
+```{r,results = "hide"}
+# normalise abundancies within samples
+bumble_bee_scent <- GCalignR::norm_peaks(bumble_bee_aligned,conc_col_name = "Area",rt_col_name = "RT",out = "data.frame")
+# Log + 1 Transformation
+bumble_bee_scent <- log(bumble_bee_scent + 1) 
+bumble_bee_scent <- bumble_bee_scent[match(row.names(bee_factors),row.names(bumble_bee_scent)),] 
+# NMDS using bray-curtis in vegan
+bumble_bee_scent_nmds <- vegan::metaMDS(comm = bumble_bee_scent,trymax = 9999) 
+# Get the coordinates
+bumble_bee_scent_nmds <- as.data.frame(bumble_bee_scent_nmds$points) 
+bumble_bee_scent_nmds <- cbind(bumble_bee_scent_nmds,Species = bee_factors[["Species"]])  
+```
+
+* Visualisation using `ggplot2`
+```{r}
+ggplot2::ggplot(data = bumble_bee_scent_nmds,ggplot2::aes(MDS1,MDS2,color = Species)) +
+ggplot2::geom_point(size = 3) + 
+ggplot2::stat_ellipse(size = 2) + 
+ggplot2::labs(title = "", x = "MDS1", y = "MDS2") +
+ggplot2::theme_bw(base_size = 14) + 
+ggplot2::theme(axis.ticks = element_blank(), axis.text = element_blank()) +
+    scale_colour_manual(values = RColorBrewer::brewer.pal(3,"Dark2"), 
+    name = "",
+    breaks = c("bimaculatus", "ephippiatus", "flavifrons"),
+    labels = c("Bombus bimaculatus","B. ephippiatus","B. flavifrons"),
+    guide = guide_legend(label.theme = element_text(
+    face = "italic", angle = 0, size = 11)))
+```
+* Multivariate statistics using `adonis` reveal a highly significant clustering by species
+```{r}
+vegan::adonis(bumble_bee_scent ~ bee_factors$Species,permutations = 999)
+```
+
+* Exploring species similarites with non-metric multidimensional scaling (NMDS) 
+```{r,results = "hide"}
+# normalise abundancies within samples
+seal_scent <- GCalignR::norm_peaks(seal_aligned,conc_col_name = "area",rt_col_name = "time",out = "data.frame")
+# Log + 1 Transformation
+seal_scent <- log(seal_scent + 1) 
+seal_scent <- seal_scent[match(row.names(peak_factors),row.names(seal_scent)),] 
+# NMDS using bray-curtis in vegan
+seal_scent_nmds <- vegan::metaMDS(comm = seal_scent,trymax = 9999) 
+# Get the coordinates
+seal_scent_nmds <- as.data.frame(seal_scent_nmds$points) 
+seal_scent_nmds <- cbind(seal_scent_nmds,colony = peak_factors[["colony"]])  
+```
+
+* Visualisation using `ggplot2`
+```{r}
+ggplot2::ggplot(data = seal_scent_nmds,ggplot2::aes(MDS1,MDS2,color = colony)) +
+ggplot2::geom_point(size = 3) + 
+ggplot2::stat_ellipse(size = 2) + 
+ggplot2::labs(title = "", x = "MDS1", y = "MDS2") +
+ggplot2::theme_bw(base_size = 14) + 
+ggplot2::theme(axis.ticks = element_blank(), axis.text = element_blank()) +
+    scale_colour_manual(values = RColorBrewer::brewer.pal(3,"Dark2")[c(1,2)], 
+    name = "",
+    breaks = c("FWB", "SSB"),
+    labels = c("Freshwater beach","Special study beach"),
+    guide = guide_legend(label.theme = element_text(
+    face = "italic", angle = 0, size = 11)))
+```
+* Multivariate statistics using `adonis` reveal a highly significant clustering by species
+```{r}
+vegan::adonis(bumble_bee_scent ~ bee_factors$Species,permutations = 999)
+```
+***
+R version and platform.
+```{r}
+sessionInfo()
+```
+***
 
 ## References
