@@ -16,7 +16,7 @@ Here, we introduce \pkg{GCalignR}, a package that implements a simple and fast a
 Furthermore, we demonstrate the easy integration of the R-package \href{https://cran.r-project.org/web/packages/vegan/index.html}{\CRANpkg{vegan}} \citep{Oksanen.2016} into a solid workflow for multivariate analyses starting with the raw chemical data, which can be fully integrated into \strong{RMarkdown} documents \citep{Allaire.2016} to fulfil good standards of reproducibility \citep{Peng.2011}.
 
 \section{The Package}
-\pkg{GCalignR} consists of functions that allow the alignment of peaks from GC and GC-MS data based on retention times. The main aim of the package is to provide a simple tool that guides the user towards the alignment of large data sets prior to hypothesis-testing of the multivariate data \citep{Anderson.2001}. We summarise the underlying algorithm and workflow (figure \ref{figure:workflow}) below and refer to the vignette that can be assessed in \strong{R} via \code{browseVignettes('GCalignR')}.
+\pkg{GCalignR} consists of functions that allow the alignment of peaks from GC and GC-MS data based on retention times. The main aim of the package is to provide a simple tool that guides the user towards the alignment of large data sets prior to hypothesis-testing of the multivariate data \citep{Anderson.2001}. We summarise the underlying algorithm and workflow (figure \ref{figure:workflow}) below and refer to the vignette that can be assessed via \code{browseVignettes('GCalignR')}.
 
 \begin{figure}[htbp]
   \centering
@@ -26,7 +26,7 @@ Furthermore, we demonstrate the easy integration of the R-package \href{https://
 \end{figure}
 
 \subsection{Example datasets}
-For demonstration purposes \pkg{GCalignR} includes data of previously published chemical signatures that were obtained by sampling the skin of 82 Antarctic fur seals \textit{Arctocephalus gazella} (see \cite{Stoffel.2015} for details on sample collection and processing). These data are available as a \emph{List} with individual samples included as a \emph{data.frame}. Two variables are available that represent the required retention time ("time") and peak abundance ("area"). 
+For demonstration purposes \pkg{GCalignR} includes data of previously published chemical signatures that were obtained by sampling the skin of 82 Antarctic fur seals \textit{Arctocephalus gazella}. We showed that these signatures encode the membership to a breeding colony \cite{Stoffel.2015}. These data are available as a \emph{List} with individual samples included as a \emph{data.frame}. Two variables are available that represent the required retention time ("time") and peak abundance ("area"). 
 
 \begin{example}
 library(GCalignR)
