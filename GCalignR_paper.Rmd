@@ -3,17 +3,17 @@ title: 'GCalignR: An R package for aligning Gas-Chromatography data'
 author: "Meinolf Ottensmann, Martin A. Stoffel, Barbara Caspers, Joseph I. Hoffman"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
-    fig_caption: yes
-    highlight: kate
-    keep_tex: yes
-    number_sections: yes
   html_document:
     fig_caption: yes
     force_captions: yes
     highlight: pygments
     number_sections: yes
     theme: cerulean
+  pdf_document:
+    fig_caption: yes
+    highlight: kate
+    keep_tex: yes
+    number_sections: yes
   word_document: default
 bibliography: bibliographyMO.bib
 ---
