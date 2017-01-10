@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6100 64-bit) (preloaded format=pdflatex 2016.11.15)  9 JAN 2017 14:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6100 64-bit) (preloaded format=pdflatex 2016.11.15)  9 JAN 2017 15:10
 entering extended mode
 **./RJwrapper.tex
 (RJwrapper.tex
@@ -1377,24 +1377,24 @@ Package microtype Info: Loading generic settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-<figures/workflow.png, id=77, 1294.08469pt x 738.50906pt>
+<figures/workflow.png, id=77, 1269.99469pt x 1053.9375pt>
 File: figures/workflow.png Graphic file (type png)
 
 <use figures/workflow.png>
 Package pdftex.def Info: figures/workflow.png used on input line 23.
-(pdftex.def)             Requested size: 369.88582pt x 211.08578pt.
+(pdftex.def)             Requested size: 369.88582pt x 306.95276pt.
 LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <10> not available
 (Font)              Font shape `T1/ppl/b/n' tried instead on input line 28.
  [1{C:/Users/meinolf/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}
 
-] <figures/text.png, id=117, 648.92438pt x 431.36156pt>
+] <figures/text.png, id=118, 648.92438pt x 431.36156pt>
 File: figures/text.png Graphic file (type png)
 
 <use figures/text.png>
 Package pdftex.def Info: figures/text.png used on input line 49.
 (pdftex.def)             Requested size: 227.62204pt x 151.3079pt.
  [2 <./figures/workflow.png>] [3 <./figures/text.png>]
-<figures/algorithm.png, id=133, 1571.11969pt x 944.7797pt>
+<figures/algorithm.png, id=134, 1571.11969pt x 944.7797pt>
 File: figures/algorithm.png Graphic file (type png)
 
 <use figures/algorithm.png>
@@ -1458,7 +1458,7 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 
 pdfTeX warning: pdflatex (file ./figures/algorithm.png): large interlaced PNG m
 ight cause out of memory (use non-interlaced PNG to fix this)
->] [5] <figures/plot-seal-aligned.png, id=152, 903.375pt x 666.99188pt>
+>] [5] <figures/plot-seal-aligned.png, id=153, 903.375pt x 666.99188pt>
 File: figures/plot-seal-aligned.png Graphic file (type png)
 
 <use figures/plot-seal-aligned.png>
@@ -1500,9 +1500,9 @@ a/Roaming/MiKTeX/2.9/fonts/type1/public/mathpazo/fplmr.pfb><C:/Program Files/Mi
 KTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts
 /type1/urw/palatino/uplr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/pal
 atino/uplri8a.pfb>
-Output written on RJwrapper.pdf (7 pages, 404327 bytes).
+Output written on RJwrapper.pdf (7 pages, 410769 bytes).
 PDF statistics:
- 238 PDF objects out of 1000 (max. 8388607)
+ 239 PDF objects out of 1000 (max. 8388607)
  41 named destinations out of 1000 (max. 500000)
  31833 words of extra memory for PDF output out of 35830 (max. 10000000)
 
