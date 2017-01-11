@@ -95,12 +95,12 @@ A reference may be selected automatically by searching for the sample with the h
 
 \subsubsection{Piece-wise alignment of substances}
 The core of the alignment procedure is based on clustering of individual peaks among samples. This is performed by examining retention times within single rows, where samples are compared consecutively with all previous samples starting with the second column (figure \ref{figure:algorithm} B):\par
-If
+
 \begin{equation}
 rt_{m} > \left(\frac{\sum_{i=1}^{m-1}rt_{i}}{m-1}\right) + max{\_}peak2mean
 \end{equation}
-the examined peak is moved into the next row, whereas all previous samples are moved \par
-if
+
+If the examined peak is moved into the next row, whereas all previous samples are moved \par
 \begin{equation}
 rt_{m} < \left(\frac{\sum_{i=1}^{m-1}rt_{i}}{m-1}\right) - max{\_}peak2mean
 \end{equation}  
@@ -109,10 +109,10 @@ with \textit{rt} = retention time; \textit{m} = current column and \textit{max{\
 \par In combination these two fairly simple algorithms align compounds by considering compound-specific variation in both steps.
 
 \subsubsection{Normalisation}
-Many multivariate analysis techniques, like those available in \pkg{vegan}, require a data frame of independent variables as input format. Moreover is generally advisable to normalise abundancies prior to statistical analysis to correct for variations in the total concentration of samples. This is utilised in \pkg{GCalignR´s} function \code{normalise_peaks} which normalises peak abundancies by calculating realtive abundancies for each sample.  
+Many multivariate analysis techniques, like those available in \pkg{vegan}, require a data frame of independent variables as input format. Moreover is generally advisable to normalise abundancies prior to statistical analysis to correct for variations in the total concentration of samples. This is utilised in \pkg{GCalignR} function `normalise_peaks` which normalises peak abundancies by calculating realtive abundancies for each sample.  
 
 \section{Workflow}
-Here, we demonstrate the typical workflow using our seal data. This is done using the function \code{align{\_}chromatograms}. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing \code{?align{\_}chromatograms}:
+Here, we demonstrate the typical workflow using our seal data. This is done using the function `align_chromatograms`. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing `?align_chromatograms`:
 
 ```{r, eval = FALSE}
 seal_aligned <- align_chromatograms(data = peak_data,
@@ -135,9 +135,7 @@ Now, we can inspect the results by retrieving summaries of the alignment process
 print(seal_aligned)
 ```
 
-The quality of an alignment will depend on sensible parameters that facilitate the (i) correction of linear shifts that might fall in a larger range with increasing sample size and (ii) and the variability of retention times. Optimally, linear shifts do not exhaust the range given by \code{max{\_}linear{\_}shift} completely, which would in turn indicate that not all uncertainties haven been fully compensated for. This can be assessed by some diagnostic plots:
-```{r}
-plot(seal_aligned)
-```
+The quality of an alignment will depend on sensible parameters that facilitate the (i) correction of linear shifts that might fall in a larger range with increasing sample size and (ii) and the variability of retention times. Optimally, linear shifts do not exhaust the range given by `max_linear_shift` completely, which would in turn indicate that not all uncertainties haven been fully compensated for. This can be assessed by some diagnostic plots:
+
 
 \bibliography{ottensmann-stoffel-hoffman}
