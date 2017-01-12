@@ -1,0 +1,158 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Allaire et~al.(2016)Allaire, Cheng, Xie, McPherson, Chang, Allen,
+  Wickham, Atkins, and Hyndman]{Allaire.2016}
+J.~J. Allaire, J.~Cheng, Y.~Xie, J.~McPherson, W.~Chang, J.~Allen, H.~Wickham,
+  A.~Atkins, and R.~Hyndman.
+\newblock rmarkdown: Dynamic documents for r, 2016.
+\newblock URL \url{https://CRAN.R-project.org/package=rmarkdown}.
+
+\bibitem[Anderson(2001)]{Anderson.2001}
+M.~J. Anderson.
+\newblock A new method for non-parametric multivariate analysis of variance.
+\newblock \emph{Austral Ecology}, 26\penalty0 (1):\penalty0 32--46, 2001.
+\newblock ISSN 14429985.
+\newblock \doi{10.1111/j.1442-9993.2001.01070.pp.x}.
+
+\bibitem[Caspers et~al.(2011)Caspers, Schroeder, Franke, and
+  Voigt]{Caspers.2011}
+B.~A. Caspers, F.~C. Schroeder, S.~Franke, and C.~C. Voigt.
+\newblock Scents of adolescence: the maturation of the olfactory phenotype in a
+  free-ranging mammal.
+\newblock \emph{PloS one}, 6\penalty0 (6):\penalty0 e21162, 2011.
+
+\bibitem[Charpentier et~al.(2010)Charpentier, Crawford, Boulet, and
+  Drea]{Charpentier.2010}
+M.~J. Charpentier, J.~C. Crawford, M.~Boulet, and C.~M. Drea.
+\newblock Message `scent': Lemurs detect the genetic relatedness and quality of
+  conspecifics via olfactory cues.
+\newblock \emph{Animal Behaviour}, 80\penalty0 (1):\penalty0 101--108, 2010.
+\newblock ISSN 00033472.
+\newblock \doi{10.1016/j.anbehav.2010.04.005}.
+
+\bibitem[de~Meulemeester et~al.(2011)de~Meulemeester, Gerbaux, Boulvin,
+  Copp{\'e}e, and Rasmont]{Meulemeester.2011}
+T.~de~Meulemeester, P.~Gerbaux, M.~Boulvin, A.~Copp{\'e}e, and P.~Rasmont.
+\newblock A simplified protocol for bumble bee species identification by
+  cephalic secretion analysis.
+\newblock \emph{Insectes Sociaux}, 58\penalty0 (2):\penalty0 227--236, 2011.
+\newblock ISSN 0020-1812.
+\newblock \doi{10.1007/s00040-011-0146-1}.
+
+\bibitem[Dellicour and Lecocq(2013)]{Dellicour.2013}
+S.~Dellicour and T.~Lecocq.
+\newblock Gcaligner 1.0: an alignment program to compute a multiple sample
+  comparison data matrix from large eco-chemical datasets obtained by gc.
+\newblock \emph{Journal of separation science}, 36\penalty0 (19):\penalty0
+  3206--3209, 2013.
+\newblock ISSN 1615-9306.
+\newblock \doi{10.1002/jssc.201300388}.
+\newblock URL
+  \url{http://onlinelibrary.wiley.com/doi/10.1002/jssc.201300388/full}.
+
+\bibitem[Hoffmann and Stoye(2009)]{Hoffmann.2009}
+N.~Hoffmann and J.~Stoye.
+\newblock Chroma: signal-based retention time alignment for chromatography-mass
+  spectrometry data.
+\newblock \emph{Bioinformatics (Oxford, England)}, 25\penalty0 (16):\penalty0
+  2080--2081, 2009.
+\newblock ISSN 1367-4803.
+\newblock \doi{10.1093/bioinformatics/btp343}.
+
+\bibitem[Jiang et~al.(2013)Jiang, Zhang, Yun, Zhan, Zheng, Liang, Yang, and
+  Yu]{Jiang.2013}
+W.~Jiang, Z.-M. Zhang, Y.~Yun, D.-J. Zhan, Y.-B. Zheng, Y.-Z. Liang, Z.~Y.
+  Yang, and L.~Yu.
+\newblock Comparisons of five algorithms for chromatogram alignment.
+\newblock \emph{Chromatographia}, 76\penalty0 (17-18):\penalty0 1067--1078,
+  2013.
+\newblock ISSN 0009-5893.
+\newblock \doi{10.1007/s10337-013-2513-8}.
+
+\bibitem[Krause et~al.(2012)Krause, Kr{\"u}ger, Kohlmeier, and
+  Caspers]{Krause.2012}
+E.~T. Krause, O.~Kr{\"u}ger, P.~Kohlmeier, and B.~A. Caspers.
+\newblock Olfactory kin recognition in a songbird.
+\newblock \emph{Biology letters}, 8\penalty0 (3):\penalty0 327--329, 2012.
+\newblock ISSN 1744-9561.
+
+\bibitem[Leclaire et~al.(2012)Leclaire, Merkling, Raynaud, Mulard,
+  Bessi{\`e}re, Lhuillier, Hatch, and Danchin]{Leclaire.2012}
+S.~Leclaire, T.~Merkling, C.~Raynaud, H.~Mulard, J.-M. Bessi{\`e}re,
+  {\'E}.~Lhuillier, S.~A. Hatch, and {\'E}.~Danchin.
+\newblock Semiochemical compounds of preen secretion reflect genetic make-up in
+  a seabird species.
+\newblock \emph{Proceedings of the Royal Society of London B: Biological
+  Sciences}, 279\penalty0 (1731):\penalty0 1185--1193, 2012.
+
+\bibitem[McNair and Miller(2011)]{McNair.2011}
+H.~M. McNair and J.~M. Miller.
+\newblock \emph{Basic gas chromatography}.
+\newblock {John Wiley {\&} Sons}, 2011.
+\newblock ISBN 1118211200.
+
+\bibitem[Oksanen et~al.(2016)Oksanen, Blanchet, Friendly, Kindt, Legendre,
+  McGlinn, Minchin, O'Hara, Simpson, Solymos, Stevens, Szoecs, and
+  Wagner]{Oksanen.2016}
+J.~Oksanen, F.~G. Blanchet, M.~Friendly, R.~Kindt, P.~Legendre, D.~McGlinn,
+  P.~R. Minchin, R.~B. O'Hara, G.~L. Simpson, P.~Solymos, M.~H.~H. Stevens,
+  E.~Szoecs, and H.~Wagner.
+\newblock vegan: Community ecology package, 2016.
+\newblock URL \url{https://CRAN.R-project.org/package=vegan}.
+
+\bibitem[Peng(2011)]{Peng.2011}
+R.~D. Peng.
+\newblock Reproducible research in computational science.
+\newblock \emph{Science (New York, N.Y.)}, 334\penalty0 (6060):\penalty0
+  1226--1227, 2011.
+\newblock ISSN 0036-8075.
+\newblock \doi{10.1126/science.1213847}.
+
+\bibitem[Pierce et~al.(2005)Pierce, Hope, Johnson, Wright, and
+  Synovec]{Pierce.2005}
+K.~M. Pierce, J.~L. Hope, K.~J. Johnson, B.~W. Wright, and R.~E. Synovec.
+\newblock Classification of gasoline data obtained by gas chromatography using
+  a piecewise alignment algorithm combined with feature selection and principal
+  component analysis.
+\newblock \emph{Journal of Chromatography A}, 1096\penalty0 (1):\penalty0
+  101--110, 2005.
+
+\bibitem[Robinson et~al.(2007)Robinson, de~Souza, Keen, Saunders, McConville,
+  Speed, and Liki{\'c}]{Robinson.2007}
+M.~D. Robinson, D.~P. de~Souza, W.~W. Keen, E.~C. Saunders, M.~J. McConville,
+  T.~P. Speed, and V.~A. Liki{\'c}.
+\newblock A dynamic programming approach for the alignment of signal peaks in
+  multiple gas chromatography-mass spectrometry experiments.
+\newblock \emph{BMC bioinformatics}, 8\penalty0 (1):\penalty0 419, 2007.
+\newblock ISSN 1471-2105.
+
+\bibitem[Stoffel et~al.(2015)Stoffel, Caspers, Forcada, Giannakara, Baier,
+  Eberhart-Phillips, M{\"u}ller, and Hoffman]{Stoffel.2015}
+M.~A. Stoffel, B.~A. Caspers, J.~Forcada, A.~Giannakara, M.~Baier,
+  L.~Eberhart-Phillips, C.~M{\"u}ller, and J.~I. Hoffman.
+\newblock Chemical fingerprints encode mother--offspring similarity, colony
+  membership, relatedness, and genetic quality in fur seals.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 112\penalty0
+  (36):\penalty0 E5005--E5012, 2015.
+
+\bibitem[Wang et~al.(2010)Wang, Ho, Kuo, and Tseng]{Wang.2010}
+S.-Y. Wang, T.-J. Ho, C.-H. Kuo, and Y.~J. Tseng.
+\newblock Chromaligner: a web server for chromatogram alignment.
+\newblock \emph{Bioinformatics (Oxford, England)}, 26\penalty0 (18):\penalty0
+  2338--2339, 2010.
+\newblock ISSN 1367-4803.
+\newblock \doi{10.1093/bioinformatics/btq337}.
+
+\bibitem[Wyatt(2014)]{Wyatt.2014}
+T.~D. Wyatt.
+\newblock \emph{Pheromones and animal behavior: chemical signals and
+  signatures}.
+\newblock {Cambridge University Press}, 2014.
+\newblock ISBN 1107647495.
+
+\end{thebibliography}
