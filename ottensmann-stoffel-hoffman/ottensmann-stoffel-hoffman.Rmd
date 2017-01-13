@@ -62,12 +62,6 @@ data("peak_data")
 str(peak_data[1:2]) 
 ```
 
-The package provides the function **check_input** to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting the errors. Prior to the start of any alignment this function is used internally.
-
-```{r}
-check_input(peak_data)
-```
-
 ### Alignment of Gas-Chromatography peaks among samples
 
 The alignment procedure is divided into five steps (figure \ref{figure:algorithm}). All steps are executed within the main function `align_chromatograms` and will be explained in in the next sections.
@@ -114,8 +108,7 @@ Sometimes, a single substance has been split up into two different rows. However
 After aligning peaks the package offers several optional post processing steps that allow to cleanup the data. 
 
 ##### Removing contaminations
-
-Among other sources, residues of unwanted chemical substances in the gas chromtography column or within reagents used in the laboratory have the potential to contaminate chemical samples. To get rid of these substances it is advised to include negative controls that have been treated in the very same way as the samples but have not been used to actually sample something. Within `align_chromatograms` those controls can be included in the data set as \textit{blanks}. Blanks are treated as normal samples during all alignment steps and are used to identify contaminants afterwards, which in turn can be removed from the data as well as the negative controls itself. 
+Among other sources, residues of unwanted chemical substances in the gas chromtography column or within reagents used in the laboratory have the potential to contaminate chemical samples. To get rid of these substances it is generally advised to include control samples. Within `align_chromatograms` those controls can be included in the data set in the same way as a normal sample. By specifying the name of one or more control samples with the `blanks = c("contr1", "contr2"),` all substances present in the control samples are removed from the dataset.
 
 #####  Removing single peaks
 
@@ -127,6 +120,12 @@ Many multivariate analysis techniques, like those available in \pkg{vegan}, requ
 
 
 ## Workflow
+
+The package provides the function **check_input** to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting the errors. Prior to the start of any alignment this function is used internally.
+
+```{r}
+check_input(peak_data)
+```
 
 ** maybe include check_input ** 
 
