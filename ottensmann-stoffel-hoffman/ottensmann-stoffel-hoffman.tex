@@ -105,47 +105,23 @@ description of all functions and their argumentsand can be assessed via
 For demonstration purposes \texttt{GCalignR} includes data of skin
 chemicals from 82 Antarctic fur seals \textit{Arctocephalus gazella}. It
 was previously shown that these signatures encode the membership to a
-breeding colony \cite{Stoffel.2015}. These data are available as a
-\texttt{list} of \texttt{data.frame}'s. Each \texttt{data.frame}
-contains the peak data of one individual, whereby one variable contains
-the retention time (``time'') and the other variable the concentration
-or peak abundance (``area'') within a sample. \textbf{we should use a
-txt file as an example here}
+breeding colony \cite{Stoffel.2015}. These data are available in a
+single text file, the standard input format of \texttt{GCalignR}, that
+is distributed with the package. The first two lines contain the names
+of all samples and variables respectively. From the third row onwards,
+data of all samples is included, whereby data frames are concatenated
+horizontally.
 
 \begin{Schunk}
 \begin{Sinput}
-library(GCalignR)
-# Seal scent data
-data("peak_data") 
-# Data is organized in one list of data frames
-str(peak_data[1:2]) 
+# Path to the dataset
+fpath <- system.file("extdata", "peak_data.txt", package = "GCalignR")
 \end{Sinput}
-\begin{Soutput}
-#> List of 2
-#>  $ C3:'data.frame':  217 obs. of  2 variables:
-#>   ..$ time: num [1:217] 4.53 4.55 4.62 4.68 4.71 4.79 4.83 4.87 5.01 5.14 ...
-#>   ..$ area: num [1:217] 3331224 1462381 4834211 7754401 1267617 ...
-#>  $ C2:'data.frame':  217 obs. of  2 variables:
-#>   ..$ time: num [1:217] 4.52 4.55 4.57 4.67 4.69 4.73 4.75 4.8 4.83 4.85 ...
-#>   ..$ area: num [1:217] 2695110 5926253 10406833 6805905 1672849 ...
-\end{Soutput}
-\end{Schunk}
-
-The package provides the function \textbf{check\_input} to test the
-input file for typical formatting errors and incomplete data. We
-encourage to use unique names for samples that consist only of letters,
-numbers and underscores. If the data fails the test, indicative warnings
-are returned which guide in correcting the errors. Prior to the start of
-any alignment this function is used internally.
-
-\begin{Schunk}
+\end{Schunk}\begin{Schunk}
 \begin{Sinput}
-check_input(peak_data)
+# Open the file in an external editor
+system.file("extdata", "peak_data.txt", package = "GCalignR")
 \end{Sinput}
-\begin{Soutput}
-#> All checks passed!
-#> Ready for processing with align_chromatograms
-\end{Soutput}
 \end{Schunk}
 
 \subsubsection{Alignment of Gas-Chromatography peaks among
@@ -232,17 +208,19 @@ with \textit{min\textunderscore diff\textunderscore peak2peak}. \par
 \paragraph{(4) Post processing}\label{post-processing}
 
 After aligning peaks the package offers several optional post processing
-steps that allow to cleanup the data. \emph{Removing contaminations}
+steps that allow to cleanup the data.
+
+\subparagraph{Removing contaminations}\label{removing-contaminations}
+
 Among other sources, residues of unwanted chemical substances in the gas
 chromtography column or within reagents used in the laboratory have the
 potential to contaminate chemical samples. To get rid of these
-substances it is advised to include negative controls that have been
-treated in the very same way as the samples but have not been used to
-actually sample something. Within \texttt{align\_chromatograms} those
-controls can be included in the data set as \textit{blanks}. Blanks are
-treated as normal samples during all alignment steps and are used to
-identify contaminants afterwards, which in turn can be removed from the
-data as well as the negative controls itself.
+substances it is generally advised to include control samples. Within
+\texttt{align\_chromatograms} those controls can be included in the data
+set in the same way as a normal sample. By specifying the name of one or
+more control samples with the
+\texttt{blanks\ =\ c("contr1",\ "contr2"),} all substances present in
+the control samples are removed from the dataset.
 
 \subparagraph{Removing single peaks}\label{removing-single-peaks}
 
@@ -264,48 +242,40 @@ calculate relative abundances within each sample.
 
 \subsection{Workflow}\label{workflow}
 
-** maybe include check\_input **
-
 Here, we demonstrate a typical workflow in \texttt{GCalignR} using our
 seal data. All alignment steps that have been described above are
-implemented within the function \texttt{align\_chromatograms}. A list of
+implemented within the function \textbf{align\_chromatograms}. A list of
 all parameters and their description can be assessed from the
-documentation in the helpfile by typing \texttt{?align\_chromatograms}.
-As it is outlined in
+documentation in the helpfile by typing \code{?align_chromatograms}. As
+it is outlined in figure \ref{figure:workflow}, the package provides the
+function \textbf{check\_input} to test the input file for typical
+formatting errors and incomplete data. We encourage to use unique names
+for samples that consist only of letters, numbers and underscores. If
+the data fails the test, indicative warnings are returned which guide in
+correcting those errors. This function ist executed internally prior to
+any alignment.
 
 \begin{Schunk}
 \begin{Sinput}
-seal_aligned <- align_chromatograms(data = peak_data,
-                    conc_col_name = "area",
-                    max_diff_peak2mean = 0.03,
-                    min_diff_peak2peak = 0.05,
-                    max_linear_shift = 0.05,
-                    rt_col_name = "time",
-                    delete_single_peak = TRUE,
-                    blanks = c("C2","C3")) # negativ controls
+check_input(fpath)
 \end{Sinput}
 \begin{Soutput}
 #> All checks passed!
 #> Ready for processing with align_chromatograms
-#> Run GCalignR
-#> Start: 21:39:28
-#> 
-#> Data for 84 samples loaded.
-#> A reference was not specified. Hence, 'P31' was selected on the basis of highest
-#> average similarity to all samples (score = 37).
-#> Start Linear Transformation with "P31" as a reference ... Done
-#> Start Alignment of Peaks ...  This might take a while!
-#> Iteration 1 out of 1  ... 
-#> Merged Redundant Peaks
-#> Peak Alignment Done 
-#> 
-#> Blank Peaks deleted & Blanks removed
-#> 
-#> Single Peaks deleted: 62 have been removed
-#> 
-#> Alignment was successful!
-#> Time: 21:56:00
 \end{Soutput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+aligned_peak_data <- align_chromatograms(data = peak_data,
+                conc_col_name = "area",
+                rt_col_name = "time",
+                max_diff_peak2mean = 0.02,
+                min_diff_peak2peak = 0.08,
+                max_linear_shift = 0.05,
+                delete_single_peak = TRUE,
+                blanks = c("C2","C3")) # negativ controls
+\end{Sinput}
 \end{Schunk}
 
 Now, we can inspect the results by retrieving summaries of the alignment
@@ -316,29 +286,30 @@ alignment:
 
 \begin{Schunk}
 \begin{Sinput}
-print(seal_aligned)
+print(aligned_peak_data)
 \end{Sinput}
 \begin{Soutput}
 #>   Summary of Peak Alignment running align_chromatograms from package GCalignR
-#>   Input: peak_data   Start:  2017-01-12 21:39:28     Finished:  2017-01-12 21:56:00 
+#>   Input: peak_data   Start:  2016-08-16 17:21:23     Finished:  2016-08-16 17:29:59 
 #> 
 #> Call:
 #>   GCalignR::align_chromatograms(data=peak_data, conc_col_name=area,
-#>   rt_col_name=time, max_linear_shift=0.05, max_diff_peak2mean=0.03,
-#>   min_diff_peak2peak=0.05, blanks=(C2, C3), delete_single_peak=TRUE, sep=\t,
-#>   rt_cutoff_low=NULL, rt_cutoff_high=NULL, reference=NULL, iterations=1)
+#>   rt_col_name=time, rt_cutoff_low=8, reference=M29, max_linear_shift=0.05,
+#>   max_diff_peak2mean=0.02, min_diff_peak2peak=0.03, blanks=(C2,
+#>   C3), delete_single_peak=T, sep=\t, rt_cutoff_high=NULL, n_iter=1,
+#>   merge_rare_peaks=FALSE)
 #> 
 #> Summary of scored substances:
 #> 
 #>     Peaks In_Blanks  Singular  Retained 
-#>       485       165        62       258 
+#>       416       119        70       227 
 #> 
-#>   In total 485 substances were identified among all samples. NA substances were
+#>   In total 416 substances were identified among all samples. NA substances were
 #>   present in blanks. The corresponding peaks as well as the blanks were removed
-#>   from the data set. 62 substances were present in just one single sample and were
-#>   removed. 258 substances are retained after all filtering steps.
+#>   from the data set. 70 substances were present in just one single sample and were
+#>   removed. 227 substances are retained after all filtering steps.
 #> 
-#> Sample Overview  The following 84 Samples were aligned to the reference 'P31':
+#> Sample Overview  The following 84 Samples were aligned to the reference 'M29':
 #>   M2, M3, M4, M5, M6, M7, M8, M9, M10, M12, M14, M15, M16, M17, M18, M19, M20,
 #>   M21, M23, M24, M25, M26, M27, M28, M29, M30, M31, M33, M35, M36, M37, M38, M39,
 #>   M40, M41, M43, M44, M45, M46, M47, M48, P2, P3, P4, P5, P6, P7, P8, P9, P10,
@@ -346,8 +317,9 @@ print(seal_aligned)
 #>   P30, P31, P33, P35, P36, P37, P38, P39, P40, P41, P43, P44, P45, P46, P47, P48
 #> 
 #> For further details:
-#>   Type 'gc_heatmap(seal_aligned)' to retrieve a heatmap for the alignment accuracy
-#>   Type 'plot(seal_aligned)' to retrieve further diagnostic plots
+#>   Type 'gc_heatmap(aligned_peak_data)' to retrieve a heatmap for the alignment
+#>   accuracy
+#>   Type 'plot(aligned_peak_data)' to retrieve further diagnostic plots
 \end{Soutput}
 \end{Schunk}
 
@@ -357,20 +329,39 @@ larger range with increasing sample size and (ii) and the variability of
 retention times. Optimally, linear shifts do not exhaust the range given
 by \texttt{max\_linear\_shift} completely, which would in turn indicate
 that not all uncertainties haven been fully compensated for. This can be
-assessed by some diagnostic plots:
+assessed by four diagnostic plots that can be created alltogether as
+well as individually.
 
 \begin{Schunk}
 \begin{Sinput}
-plot(seal_aligned)
+plot(aligned_peak_data)
 \end{Sinput}
 
-\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-5-1} \begin{Sinput}
-gc_heatmap(seal_aligned,type = "continuous", substance_subset = 1:25, samples_subset = 1:25)
+\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-7-1} \end{Schunk}
+
+The distribution of peak number before and after the alignment reveals a
+noticeable reduction of peaks in the aligned dataset. These changes can
+be explained by the removal of contamimations (i.e.~peaks present in
+blanks) and the removal of single peaks. Type
+\code{print(aligned_peak_data)} for details on both. The distribution of
+shifts size used for linear transformations shows a marginal linear
+trend across the chromatography run. Besides the pure number of peaks it
+is of major interest to inspect the distribution of substances in the
+pool of samples and access the variation in retention times. This can be
+investigated simultaneously with a heatmap.
+
+\begin{Schunk}
+\begin{Sinput}
+gc_heatmap(aligned_peak_data,type = "discrete", substance_subset = 1:25, samples_subset = 1:25)
 \end{Sinput}
 
-\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-5-2} \end{Schunk}
+\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-8-1} \end{Schunk}
 
-\bibliography{ottensmann-stoffel-hoffman}
+The heatmap indicates the presence of a certain substance within a
+sample by a colour-filled box, whereas the absense is encoded by a white
+box. Furthermore a colour-gradient is used to indicate the deviation of
+each retention time from the mean value among all other samples as a
+measure of variation. \bibliography{ottensmann-stoffel-hoffman}
 
 \address{%
 Meinolf Ottensmann\\

@@ -52,14 +52,19 @@ An easy workflow for the analysis of chemical data including `GCalignR` is shown
 
 #### Example dataset
 
-For demonstration purposes `GCalignR` includes data of skin chemicals from 82 Antarctic fur seals \textit{Arctocephalus gazella}. It was previously shown that these signatures encode the membership to a breeding colony \cite{Stoffel.2015}. These data are available as a `list` of `data.frame`'s. Each `data.frame` contains the peak data of one individual, whereby one variable contains the retention time ("time") and the other variable the concentration or peak abundance ("area") within a sample.  **we should use a txt file as an example here**
+For demonstration purposes `GCalignR` includes data of skin chemicals from 82 Antarctic fur seals \textit{Arctocephalus gazella}. It was previously shown that these signatures encode the membership to a breeding colony \cite{Stoffel.2015}. These data are available in a single text file, the standard input format of `GCalignR`, that is distributed with the package. The first two lines contain the names of all samples and variables respectively. From the third row onwards, data of all samples is included, whereby data frames are concatenated horizontally.
+
+```{r,echo=FALSE,results='hide'}
+library(GCalignR)
+```
 
 ```{r}
-library(GCalignR)
-# Seal scent data
-data("peak_data") 
-# Data is organized in one list of data frames
-str(peak_data[1:2]) 
+# Path to the dataset
+fpath <- system.file("extdata", "peak_data.txt", package = "GCalignR")
+```
+```{r,eval=FALSE}
+# Open the file in an external editor
+system.file("extdata", "peak_data.txt", package = "GCalignR")
 ```
 
 ### Alignment of Gas-Chromatography peaks among samples
@@ -120,39 +125,38 @@ Many multivariate analysis techniques, like those available in \pkg{vegan}, requ
 
 
 ## Workflow
-
-The package provides the function **check_input** to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting the errors. Prior to the start of any alignment this function is used internally.
+Here, we demonstrate a typical workflow in `GCalignR` using our seal data. All alignment steps that have been described above are implemented within the function **align_chromatograms**. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing \code{?align_chromatograms}. As it is outlined in figure \ref{figure:workflow}, the package provides the function **check_input** to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting those errors. This function ist executed internally prior to any alignment.
 
 ```{r}
-check_input(peak_data)
+check_input(fpath)
 ```
 
-** maybe include check_input ** 
-
-Here, we demonstrate a typical workflow in `GCalignR` using our seal data. All alignment steps that have been described above are implemented within the function `align_chromatograms`. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing `?align_chromatograms`. As it is outlined in  
-
-```{r, eval = TRUE, cache = TRUE}
-seal_aligned <- align_chromatograms(data = peak_data,
-                    conc_col_name = "area",
-                    max_diff_peak2mean = 0.03,
-                    min_diff_peak2peak = 0.05,
-                    max_linear_shift = 0.05,
-                    rt_col_name = "time",
-                    delete_single_peak = TRUE,
-                    blanks = c("C2","C3")) # negativ controls
+```{r, eval = FALSE}
+aligned_peak_data <- align_chromatograms(data = peak_data,
+                conc_col_name = "area",
+                rt_col_name = "time",
+                max_diff_peak2mean = 0.02,
+                min_diff_peak2peak = 0.08,
+                max_linear_shift = 0.05,
+                delete_single_peak = TRUE,
+                blanks = c("C2","C3")) # negativ controls
 ```
-
 Now, we can inspect the results by retrieving summaries of the alignment process. The printing method summarises the function call including defaults that have not been explicitly specified during the function call. We also get the relevant information to retrace every step in the alignment:
 
 ```{r}
-print(seal_aligned)
+print(aligned_peak_data)
 ```
 
-The quality of an alignment will depend on sensible parameters that facilitate the (i) correction of linear shifts that might fall in a larger range with increasing sample size and (ii) and the variability of retention times. Optimally, linear shifts do not exhaust the range given by `max_linear_shift` completely, which would in turn indicate that not all uncertainties haven been fully compensated for. This can be assessed by some diagnostic plots:
+The quality of an alignment will depend on sensible parameters that facilitate the (i) correction of linear shifts that might fall in a larger range with increasing sample size and (ii) and the variability of retention times. Optimally, linear shifts do not exhaust the range given by `max_linear_shift` completely, which would in turn indicate that not all uncertainties haven been fully compensated for. This can be assessed by four diagnostic plots that can be created alltogether as well as individually.
 
 ```{r, fig.width = 6, fig.height = 6}
-plot(seal_aligned)
-gc_heatmap(seal_aligned,type = "continuous", substance_subset = 1:25, samples_subset = 1:25)
+plot(aligned_peak_data)
 ```
+The distribution of peak number before and after the alignment reveals a noticeable reduction of peaks in the aligned dataset. These changes can be explained by the removal of contamimations (i.e. peaks present in blanks) and the removal of single peaks. Type \code{print(aligned_peak_data)} for details on both. The distribution of shifts size used for linear transformations shows a marginal linear trend across the chromatography run. 
+Besides the pure number of peaks it is of major interest to inspect the distribution of substances in the pool of samples and access the variation in retention times. This can be investigated simultaneously with a heatmap.
 
+```{r, fig.height = 6, fig.width = 6}
+gc_heatmap(aligned_peak_data,type = "discrete", substance_subset = 1:25, samples_subset = 1:25)
+```
+The heatmap indicates the presence of a certain substance within a sample by a colour-filled box, whereas the absense is encoded by a white box. Furthermore a colour-gradient is used to indicate the deviation of each retention time from the mean value among all other samples as a measure of variation. 
 \bibliography{ottensmann-stoffel-hoffman}
