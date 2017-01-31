@@ -78,7 +78,7 @@ scatter3D(
     cex.lab = 1.25,
     cex.axis = 1.25,
     cex.main = 3,
-    zlim = c(0,0.25))
+    zlim = c(0,0.3))
 
 with(errors_beph, scatter3D(
     x = p2p,
@@ -99,7 +99,7 @@ with(errors_beph, scatter3D(
     cex.lab = 1.25,
     cex.axis = 1.25,
     cex.main = 3,
-    zlim = c(0,0.25)))
+    zlim = c(0,0.3)))
 
 with(errors_bfla, scatter3D(
     x = p2p ,
@@ -120,7 +120,7 @@ with(errors_bfla, scatter3D(
     cex.lab = 1.25,
     cex.axis = 1.25,
     cex.main = 3,
-    zlim = c(0,0.25))) 
+    zlim = c(0,0.3))) 
 
 ### #####################
 

@@ -1,4 +1,4 @@
-error_rate <- function(GCalignObject, Reference = "ottensmann-stoffel-hoffman/Supplementary-A/data/bbim_ms.txt") {
+error_rate <- function(GCalignObject, Reference = "ottensmann-stoffel-hoffman/Supplementary-A/data/bbim_ms.txt", rt_col_name = "RT", linshift = TRUE) {
 
 ### Internal functions
 ### -----------------------------------------------------------------
@@ -14,27 +14,34 @@ error_rate <- function(GCalignObject, Reference = "ottensmann-stoffel-hoffman/Su
     }
 ### -----------------------------------------------------------------
 
-    # Obtain linear shifts that have been applied to retention times during alignment
-shifts <- GCalignObject[["Logfile"]][["LinearShift"]][["shift"]] 
+    
     # Get retention times
-rt <- GCalignObject[["aligned"]][["RT"]]
+rt <- GCalignObject[["aligned"]][[rt_col_name]]
     # load ms-data and round retention times
 ref <- read.table(Reference,sep = "\t",header = T)
 ref[,2:ncol(ref)] <- round(ref[,2:ncol(ref)],digits = 2)
     # format as lists
-aligned <- as.list(rt[,2:ncol(rt)])
+aligned <- as.list(round(rt[,2:ncol(rt)],2))
+if (isTRUE(linshift)) {
+    # Obtain linear shifts that have been applied to retention times during alignment
+    shifts <- GCalignObject[["Logfile"]][["LinearShift"]][["shift"]] 
 for (i in 1:length(aligned)) {
     aligned[[i]][aligned[[i]] > 0] <- aligned[[i]][aligned[[i]] > 0] - shifts[i]
 }
+} 
 ms <- as.list(ref[,3:ncol(ref)])
 
 ## Match peaks to known substances
 indices <- list()
 # Select the rows that can be linked to known substances for each sample
 for (i in 1:length(aligned)) {
-    indices <- append(indices,list(which(aligned[[i]] %in% ms[[i]])))   
+    indices <- append(indices,list(which(aligned[[i]][aligned[[i]] > 0] %in% ms[[i]][ms[[i]] > 0])))  
+    t1 <- length(which(aligned[[i]][aligned[[i]] > 0] %in% ms[[i]][ms[[i]] > 0]))
+    t2 <- length(ms[[i]][!is.na(ms[[i]]) & ms[[i]] > 0])
 }
 ## get all rows
+
+
 rows <- sort(unique(unlist(indices)))
 ## update the lists, discard rows that are not informative
 fx <- function(x, rows) x[rows]
@@ -51,7 +58,7 @@ for (i in 1:length(ms)) { # All samples
 }
 ### Step 2. Define correct row for each substance as the mode, function Mode()
 
-library(MyFunctions)
+
 fy <- function(x,y) { 
     if (any(x %in% y)) { 
         out <- which(x == y)
@@ -67,9 +74,14 @@ for (n in 1:length(ref[["Compounds"]])) {
     r <- append(r, (Mode(apply(merge,2,fy,as.character(ref[["Compounds"]][[n]])))[[1]][[1]]))
     temp <- apply(merge,2,fy,as.character(ref[["Compounds"]][[n]]))
     temp <- as.vector(temp[!is.na(temp)])
-    if(any(temp != r[n])) x <- length(temp[temp != r[n]]) + x
+    if (any(temp != r[n])) x <- length(temp[temp != r[n]]) + x
 }
 
-error <- x/(nrow(ref) * ncol(ref))
+temp <- unlist((ref[1:nrow(ref),3:ncol(ref)]))
+N <- length(temp[!is.na(temp) & temp > 0])
+N1 <- length(unlist(indices))
+if (N > N1) warning("Not all retention times were matched")
+# check
+error <- x/N
 return(error)
 }

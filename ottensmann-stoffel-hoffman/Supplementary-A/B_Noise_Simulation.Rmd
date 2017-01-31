@@ -1,32 +1,165 @@
 ---
-title: "Simulate the effects of Noise"
+title: "Simulate the effects of noise"
 author: "Meinolf Ottensmann, Martin A. Stoffel, Joseph Hoffman"
 output: html_document
+bibliography: bibliography.bib
 ---
 
 ```{r, echo = FALSE}
 library(knitr)
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>",cache = TRUE,
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>",cache = FALSE,
     fig.width = 7, fig.height = 7) # warning = FALSE
 ```
 
 ## Preamble
-Here, we provide all necessary code for our simulation experiment that was conducted to estimate the effects of noise on the alignment of known substances. Due to the extensive computation time we include the aligned datasets along with this document.
+Here, we provide all necessary code for our simulation experiment that was conducted to estimate the effects of noise on the alignment of known substances. *Due to the extensive computation time we include the aligned datasets along with this document*.
 
 ## Rational
-Based on the original datasets on bumblebee species published by [@Dellicour.2013] we simulated different noise levels by adding small deviations to randomly selected peaks within each sample. Thereby we use the unaffected data as a baseline to evaluate the robustness in peak alignments with GCalignR.
+Based on the original datasets on bumblebee species published by [@Dellicour.2013] we simulated different noise levels by adding small deviations to randomly selected peaks within each sample. Thereby we use the original data as a unbiased baseline to evaluate the robustness in peak alignments with GCalignR.
 
 ## Prerequisites
 At first we need to align the datasets using the default setting. These will be our baseline estimations.
-```{r}
+```{r, eval=FALSE}
 library(GCalignR)
-source("R/ChromaSimFunctions.R")
-bbim_zero <- align_chromatograms(data = "data/bbim.txt",conc_col_name = "Area",rt_col_name = "RT")
-beph_zero <- align_chromatograms(data = "data/beph.txt",conc_col_name = "Area",rt_col_name = "RT")
-bfla_zero <- align_chromatograms(data = "data/bfla.txt",conc_col_name = "Area",rt_col_name = "RT")
+source("C:/Users/meinolf/Documents/GitHub/GCalignR_paper/ottensmann-stoffel-hoffman/Supplementary-A/R/ChromaSimFunctions.R")
+```
+```{r,eval=FALSE}
+bbim_zero <- align_chromatograms(data = "data/bbim.txt",rt_col_name = "RT")
+save(bbim_zero,file = "data/bbim_zero.RData")
+beph_zero <- align_chromatograms(data = "data/beph.txt",rt_col_name = "RT")
+save(beph_zero,file = "data/beph_zero.RData")
+bfla_zero <- align_chromatograms(data = "data/bfla.txt",rt_col_name = "RT")
+save(bfla_zero,file = "data/bfla_zero.RData")
+```
+```{r,eval=FALSE}
+load("data/bbim_zero.RData")
+load("data/beph_zero.RData")
+load("data/bfla_zero.RData")
+```
+## bfla as a list
+```{r,eval=FALSE}
+bfla_chroma <- lapply(bfla_zero[["input_list"]],na.remove) # remove NAs
+bbim_chroma <- lapply(bbim_zero[["input_list"]],na.remove) # remove NAs
+beph_chroma <- lapply(beph_zero[["input_list"]],na.remove) # remove NAs
+```
+## Simulations
+### Dataset *Bombus flavifrons*
+```{r,results='hide',eval=FALSE}
+bfla_out <- sim_linear_shift(bfla_chroma,rt_col_name = "RT",shifts = c(-0.03,0.03))
+bfla_shifted <- bfla_out[["Chromas"]] # linearly shifted samples
+
+p <- rep(seq(from = 0,to = 1,by = 0.05),each = 3)
+bfla_data <- list()
+names <- character()
+for (i in 1:length(p)) { 
+    # add errors
+    temp <- lapply(bfla_shifted,add_peak_error,p = p[i],rt_col_name = "RT",conc_col_name = "Area",distr = c(-0.02,-0.01,0.01,0.02)) 
+    # extract peak list
+    temp <- lapply(temp, FUN = function(x) x[["chroma"]])
+    aligned <- align_chromatograms(temp,rt_col_name = "RT",max_linear_shift = 0.05)     # We need the "true" retention times for referencing purposes
+    aligned <- original_rt(org = bfla_chroma,aligned = aligned,rt_col_name = "RT")
+    bfla_data <- append(bfla_data,list(aligned))
+    names <- c(names,paste0("no_",as.character(i),"_noise_",as.character(p[i])))
+}
+names(bfla_data) <- names
+bfla_simulations <- list(OptAlign = bfla_zero,SimAlign = bfla_data,noise = p) 
+save(x = bfla_simulations,file = paste0("data/","bfla_simulations",".RData"))   
 ```
 
-## Build gc_peak_lists
-```{r}
-bbim_chroma <- bbim_zero[["aligned_list"]]
+### Dataset *Bombus bimaculatus*
+```{r,results='hide',eval=FALSE}
+bbim_out <- sim_linear_shift(bbim_chroma,rt_col_name = "RT",shifts = c(-0.03,0.03))
+bbim_shifted <- bbim_out[["Chromas"]] # linearly shifted sample
+
+p <- rep(seq(from = 0,to = 1,by = 0.05),each = 3)
+bbim_data <- list()
+names <- character()
+for (i in 1:length(p)) { 
+    # add errors
+    temp <- lapply(bbim_shifted,add_peak_error,p = p[i],rt_col_name = "RT",conc_col_name = "Area",distr = c(-0.02,-0.01,0.01,0.02)) 
+    # extract peak list
+    temp <- lapply(temp, FUN = function(x) x[["chroma"]])
+    aligned <- align_chromatograms(temp,rt_col_name = "RT",max_linear_shift = 0.05)     # We need the "true" retention times for referencing purposes
+    aligned <- original_rt(org = bbim_chroma,aligned = aligned,rt_col_name = "RT")
+    bbim_data <- append(bbim_data,list(aligned))
+    names <- c(names,paste0("no_",as.character(i),"_noise_",as.character(p[i])))
+}
+names(bbim_data) <- names
+bbim_simulations <- list(OptAlign = bbim_zero,SimAlign = bbim_data,noise = p) 
+save(x = bbim_simulations,file = paste0("data/","bbim_simulations",".RData"))   
 ```
+### Dataset *Bombus ephippiatus*
+```{r,results='hide',eval=FALSE}
+beph_out <- sim_linear_shift(beph_chroma,rt_col_name = "RT",shifts = c(-0.03,0.03))
+beph_shifted <- beph_out[["Chromas"]] # linearly shifted sample
+
+p <- rep(seq(from = 0,to = 1,by = 0.05),each = 3)
+beph_data <- list()
+names <- character()
+for (i in 1:length(p)) { 
+    # add errors
+    temp <- lapply(beph_shifted,add_peak_error,p = p[i],rt_col_name = "RT",conc_col_name = "Area",distr = c(-0.02,-0.01,0.01,0.02)) 
+    # extract peak list
+    temp <- lapply(temp, FUN = function(x) x[["chroma"]])
+    aligned <- align_chromatograms(temp,rt_col_name = "RT", max_linear_shift = 0.05)    
+    # We need the "true" retention times for referencing purposes
+    aligned <- original_rt(org = beph_chroma,aligned = aligned,rt_col_name = "RT")
+    beph_data <- append(beph_data,list(aligned))
+    names <- c(names,paste0("no_",as.character(i),"_noise_",as.character(p[i])))
+}
+names(beph_data) <- names
+beph_simulations <- list(OptAlign = beph_zero,SimAlign = beph_data,noise = p) 
+save(x = beph_simulations,file = paste0("data/","beph_simulations",".RData"))   
+```
+
+## Error estimation
+```{r, eval=FALSE}
+## load data & functions
+source("R/error_rate.R")
+load("data/bfla_simulations.RData")
+load("data/beph_simulations.RData")
+load("data/bbim_simulations.RData")
+## set up data frames
+bfla <- data.frame(data.frame(noise = bfla_simulations[["noise"]]))
+bbim <- data.frame(data.frame(noise = bbim_simulations[["noise"]]))
+beph <- data.frame(data.frame(noise = beph_simulations[["noise"]]))
+## calculate errors
+bfla[["error"]] <- unlist(lapply(X = bfla_simulations[["SimAlign"]],
+                                 error_rate, Reference = "data/bfla_ms.txt",
+                                 rt_col_name = "RT", linshift = FALSE))
+bbim[["error"]] <- unlist(lapply(X = bbim_simulations[["SimAlign"]],
+                                 error_rate, Reference = "data/bbim_ms.txt",
+                                 rt_col_name = "RT", linshift = FALSE))
+beph[["error"]] <- unlist(lapply(X = beph_simulations[["SimAlign"]],
+                                 error_rate, Reference = "data/beph_ms.txt",
+                                 rt_col_name = "RT",linshift = FALSE))
+## merge data frames
+df <- rbind(bbim,bfla,beph)
+df[["id"]] <- rep(c("bbim","bfla","beph"),each = nrow(df)/3)
+save(df,file = "data/df.RData")
+```
+## Plotting
+```{r}
+load("data/df.RData")
+library(ggplot2)
+ggplot2::ggplot(data = df,aes(x = noise, y = error, group = id, col = id))+ 
+    geom_smooth(level = 0.95) + 
+    theme_bw(base_size = 12) + 
+    theme(aspect.ratio = 1) +
+    xlab("Additional noise level") +
+    ylab("Error rate") +
+    scale_x_continuous(breaks = seq(0,1,0.1)) +
+    scale_y_continuous(breaks = seq(0,0.3,0.02)) +
+    scale_colour_manual(values = c("#1B9E77", "#D95F02", "#7570B3"),
+                        name = "Datasets",
+                        breaks = c("bbim", "beph", "bfla"),
+                        labels = c("Bombus bimaculatus",
+                                 "B. ephippiatus",
+                                 "B. flavifrons"),
+                        guide = guide_legend(
+                            label.theme = element_text(
+                                face = "italic", angle = 0,
+                                size = 11)))
+```
+
+## References 
