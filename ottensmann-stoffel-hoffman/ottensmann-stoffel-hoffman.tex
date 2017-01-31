@@ -181,9 +181,9 @@ samples are moved \par
 rt_{m} < \left(\frac{\sum_{i=1}^{m-1}rt_{i}}{m-1}\right) - max\textunderscore peak2mean
 \end{equation}
 
-with \textit{rt} = retention time; \textit{m} = current column and
-\textit{max\textunderscore diff\textunderscore peak2mean} defining the
-maximal deviation of the mean retention time.
+with \emph{rt} = retention time; \emph{m} = current column and
+\emph{max\_diff\_peak2mean} defining the maximal deviation of the mean
+retention time.
 
 By considering the mean retention time among all previous samples the
 algorithm accounts for substance specific variations, such that less
@@ -202,7 +202,7 @@ rows will be merged when this does not cause any loss of any information
 (i.e.~no sample exists that contains substances in both rows).(figure
 \ref{figure:algorithm} C). Again, the user can change the threshold for
 the minimal difference in the retention time between two mergeable peaks
-with \textit{min\textunderscore diff\textunderscore peak2peak}. \par 
+with \emph{min\_diff\_peak2peak}. \par 
 
 \paragraph{(4) Post processing}\label{post-processing}
 

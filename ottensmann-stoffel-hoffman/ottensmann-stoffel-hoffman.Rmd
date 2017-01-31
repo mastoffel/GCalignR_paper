@@ -99,13 +99,13 @@ If the examined peak is moved into the next row, whereas all previous samples ar
 rt_{m} < \left(\frac{\sum_{i=1}^{m-1}rt_{i}}{m-1}\right) - max\textunderscore peak2mean
 \end{equation}  
 
-with \textit{rt} = retention time; \textit{m} = current column and \textit{max\textunderscore diff\textunderscore peak2mean} defining the maximal deviation of the mean retention time.
+with *rt* = retention time; *m* = current column and *max_diff_peak2mean* defining the maximal deviation of the mean retention time.
 
 By considering the mean retention time among all previous samples the algorithm accounts for substance specific variations, such that less variable retention times are treated more stringent than chemicals exhibiting higher variability. Once the last retention time of a row was evaluated the whole procedure is repeated with the next row until the end of the retention time matrix was reached. 
 
 #### (3)  Merging
 
-Sometimes, a single substance has been split up into two different rows. However, the emerging pattern is very clear, as part of the samples will have the substance in a given row, but no substance in the adjacent row and vice versa for another part of the samples. Knowing this pattern, rows will be merged when this does not cause any loss of any information (i.e. no sample exists that contains substances in both rows).(figure \ref{figure:algorithm} C). Again, the user can change the threshold  for the minimal difference in the retention time between two mergeable peaks with \textit{min\textunderscore diff\textunderscore peak2peak}. 
+Sometimes, a single substance has been split up into two different rows. However, the emerging pattern is very clear, as part of the samples will have the substance in a given row, but no substance in the adjacent row and vice versa for another part of the samples. Knowing this pattern, rows will be merged when this does not cause any loss of any information (i.e. no sample exists that contains substances in both rows).(figure \ref{figure:algorithm} C). Again, the user can change the threshold  for the minimal difference in the retention time between two mergeable peaks with *min_diff_peak2peak*. 
 \par 
 
 #### (4) Post processing
