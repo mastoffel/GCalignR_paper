@@ -1,5 +1,5 @@
 ---
-title: GCalignR. An R package for aligning Gas-Chromatography data 
+title: GCalignR. An R package for aligning Gas-Chromatography data
 author:
   - name: Meinolf Ottensmann
     affiliation: Department of Animal Behaviour
@@ -7,7 +7,7 @@ author:
     - Bielefeld University
     - Morgenbreede 45
     - 33615 Bielefeld
-    email:  Meinolf.Ottensmann@web.de
+    email:  meinolf.ottensmann@web.de
   - name: Martin A. Stoffel
     affiliation: Department of Animal Behaviour
     address:
@@ -21,11 +21,9 @@ author:
     - Bielefeld University
     - Morgenbreede 45
     - 33615 Bielefeld
-    email:  j_i_hoffman@hotmail.com
-
+    email: j_i_hoffman@hotmail.com
 abstract: >
   Chemical signals are among the most fundamental and oldest means of animal communication. The desire to unravel broader patterns of chemical communication in birds and mammals paved the way for two not entirely new techniques, gas-chromatography and mass-spectrometry, in the fields of ecology and evolution. Comparing chemical profiles or chromatograms across many individuals yields some major obstacles as even the newest GC machines have an inherent error when measuring the retention times of chemical substances. Here we present GCalignR, an R package for the alignment of chromatography peaks among samples prior to hypothesis testing using multivariate statistics. GCalignR is specifically designed to be used by non-chemists by providing easy to use functions to check and align gas-chromatography data based on retention times. In addition, the package implements heatmaps and other plots to evaluate and potentially adjust the peak alignment. We hope that GCalignR will provide a tool that fits into a common biologist's workflow in R and that the package will facilitate the standardization and reproducibility of studies on chemical communication.
-
 preamble: >
   % Any extra latex you need in the preamble
 output: rticles::rjournal_article
@@ -43,14 +41,13 @@ Furthermore, we demonstrate a complete workflow from chemical raw data to multiv
 An easy workflow for the analysis of chemical data including `GCalignR` is shown in figure \ref{figure:workflow} and described below. The package vignette provides a detailed description of all functions and their arguments and can be assessed via \code{browseVignettes('GCalignR')} once the package was installed.
 
 \begin{figure}[htbp]
-  \centering
-  \includegraphics[width=13cm]{figures/workflow}
-  \caption{\pkg{GCalignR} workflow. In addition to the alignment of substances across samples, the package provides functions for checking and inspecting the data. The aligned data is ready to use for analyses in conjunction with other packages. Each function is explained within the text.}
-  \label{figure:workflow}
+\centering
+\includegraphics[width=13cm]{figures/workflow}
+\caption{\pkg{GCalignR} workflow. In addition to the alignment of substances across samples, the package provides functions for checking and inspecting the data. The aligned data is ready to use for analyses in conjunction with other packages. Each function is explained within the text.}
+\label{figure:workflow}
 \end{figure}
 
-
-#### Example dataset
+### Example dataset
 
 For demonstration purposes `GCalignR` includes data of skin chemicals from 82 Antarctic fur seals \textit{Arctocephalus gazella}. It was previously shown that these signatures encode the membership to a breeding colony \cite{Stoffel.2015}. These data are available in a single text file, the standard input format of `GCalignR`, that is distributed with the package. The first two lines contain the names of all samples and variables respectively. From the third row onwards, data of all samples is included, whereby data frames are concatenated horizontally.
 
@@ -63,30 +60,31 @@ library(GCalignR)
 ## Path to the dataset
 fpath <- system.file("extdata", "peak_data.txt", package = "GCalignR")
 ```
+
 ```{r,eval=FALSE}
 # Open the file in an external editor
-system.file("extdata", "peak_data.txt", package = "GCalignR")
+file.show(fpath)
 ```
 
-### Alignment of Gas-Chromatography peaks among samples
+## Alignment of Gas-Chromatography peaks among samples
 
 The alignment procedure is divided into five steps (figure \ref{figure:algorithm}). All steps are executed within the main function `align_chromatograms` and will be explained in in the next sections.
 
-#### (1) Linear adjustments of chromatograms
+### (1) Linear adjustments of chromatograms
 
 At first, all peaks within a chromatogram are shifted with respect to a reference chromatogram to account for systematic shifts in retention times among homologous chemicals shared by samples (figure \ref{figure:algorithm} A). This is done for all samples in relation to the reference sample such that the number shared peaks is maximised.The parameter *max_linear_shift* defines the maximum temporal range of linear shifts that are considered by the program. \newline
 Note: This method relies on the occurrence of substances that are shared among most substances to produce efficient adjustments. If those are absent, it is unlikely to find a suitable shift and chromatograms remain untransformed. \par
-A reference is selected automatically by searching for the sample with the highest average similarity to all other samples based on the number of shared peaks prior to alignment. Alternatively, a chromatogram can be included that contains peaks of an internal standard which peaks are \textit{a-priori} known to occur in all samples. In this case, the sample is named `reference` and will be removed after the alignment was conducted.
+A reference is selected automatically by searching for the sample with the highest average similarity to all other samples based on the number of shared peaks prior to alignment. Alternatively, a chromatogram can be included that contains peaks of an internal standard which peaks are *{a-priori}* known to occur in all samples. In this case, the sample is named `reference` and will be removed after the alignment was conducted.
 
 \newpage
 \begin{figure}[htbp]
-  \centering
-  \includegraphics[width=13cm]{figures/algorithm}
-  \caption{Overview of the algorithm performed by GCalignR. Rows of matrices correspond to substances, columns are samples. Zeros indicate absence of peaks and are ignored in calculations. \textbf{1}. Chromatograms are linearly shifted with respect to a reference (S2). \textbf{2}. From left to right the first four steps from the input matrix to the final alignment are shown. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all samples in previous columns until the last column is reached. \textbf{3}. Coloured cells represent conflicting retention times using a minumum \code{max_diff_peak2mean = 0.02}, which defines the minimum difference expected between two distinct substances. If merging does not result in the loss of any data, rows are merged. \textbf{4}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. Unique peaks present in only a single individual are not of interest for similarity analyses and can be removed as well.}
-  \label{figure:algorithm}
+\centering
+\includegraphics[width=13cm]{figures/algorithm}
+\caption{Overview of the algorithm performed by GCalignR. Rows of matrices correspond to substances, columns are samples. Zeros indicate absence of peaks and are ignored in calculations. \textbf{1}. Chromatograms are linearly shifted with respect to a reference (S2). \textbf{2}. From left to right the first four steps from the input matrix to the final alignment are shown. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all samples in previous columns until the last column is reached. \textbf{3}. Coloured cells represent conflicting retention times that show a greater difference than specified. If merging does not result in the loss of any data, rows are merged. \textbf{4}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. Unique peaks present in only a single individual are not of interest for similarity analyses and can be removed as well.}
+\label{figure:algorithm}
 \end{figure} 
 
-#### (2)  Peak alignment
+### (2)  Peak alignment
 The core of the alignment procedure is based on clustering of individual peaks across samples. This is performed by examining retention times within single rows, where samples are compared consecutively with all previous samples starting with the second column (figure \ref{figure:algorithm} B):\par
 
 \begin{equation}
@@ -103,29 +101,28 @@ with *rt* = retention time; *m* = current column and *max_diff_peak2mean* defini
 
 By considering the mean retention time among all previous samples the algorithm accounts for substance specific variations, such that less variable retention times are treated more stringent than chemicals exhibiting higher variability. Once the last retention time of a row was evaluated the whole procedure is repeated with the next row until the end of the retention time matrix was reached. 
 
-#### (3)  Merging
+### (3)  Merging
 
 Sometimes, a single substance has been split up into two different rows. However, the emerging pattern is very clear, as part of the samples will have the substance in a given row, but no substance in the adjacent row and vice versa for another part of the samples. Knowing this pattern, rows will be merged when this does not cause any loss of any information (i.e. no sample exists that contains substances in both rows).(figure \ref{figure:algorithm} C). Again, the user can change the threshold  for the minimal difference in the retention time between two mergeable peaks with *min_diff_peak2peak*. 
 \par 
 
-#### (4) Post processing
+### (4) Post processing
 
 After aligning peaks the package offers several optional post processing steps that allow to cleanup the data. 
 
-##### Removing contaminations
+### Removing contaminations
 Among other sources, residues of unwanted chemical substances in the gas chromtography column or within reagents used in the laboratory have the potential to contaminate chemical samples. To get rid of these substances it is generally advised to include control samples. Within `align_chromatograms` those controls can be included in the data set in the same way as a normal sample. By specifying the name of one or more control samples with the `blanks = c("contr1", "contr2"),` all substances present in the control samples are removed from the dataset.
 
-#####  Removing single peaks
+### Removing single peaks
 
 Sometimes, substances occur purely in a single sample. For comparative approaches that calculate similarity matrices these substances are often not informative and can be removed from the data. `GCalignR` allows to do so by setting the `delete_single_peak` argument to `TRUE`.
 
-#####  Normalisation
+### Normalisation
 
-Many multivariate analysis techniques, like those available in \pkg{vegan}, require a `data,frame` of independent variables as input format. Moreover it is generally advisable to normalise substance abundances prior to statistical analysis to correct for variations in the total concentration of samples. This can be done in `GCalignR` with the function `normalise_peaks` which calculate relative abundances within each sample.  
-
+Many multivariate analysis techniques, like those available in \pkg{vegan}, require a `data,frame` of independent variables as input format. Moreover it is generally advisable to normalise substance abundances prior to statistical analysis to correct for variations in the total concentration of samples. This can be done in `GCalignR` with the function `normalise_peaks` which calculate relative abundances within each sample.
 
 ## Workflow
-Here, we demonstrate a typical workflow in `GCalignR` using our seal data. All alignment steps that have been described above are implemented within the function **align_chromatograms**. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing \code{?align_chromatograms}. As it is outlined in figure \ref{figure:workflow}, the package provides the function **check_input** to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting those errors. This function ist executed internally prior to any alignment.
+Here, we demonstrate a typical workflow in `GCalignR` using our seal data. All alignment steps that have been described above are implemented within the function `align_chromatograms`. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing `?align_chromatograms`. As it is outlined in figure \ref{figure:workflow}, the package provides the function `check_input` to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting those errors. This function ist executed internally prior to any alignment.
 
 ```{r}
 check_input(fpath)
@@ -133,30 +130,45 @@ check_input(fpath)
 
 ```{r, eval = FALSE}
 aligned_peak_data <- align_chromatograms(data = peak_data,
-                conc_col_name = "area",
-                rt_col_name = "time",
-                max_diff_peak2mean = 0.02,
-                min_diff_peak2peak = 0.08,
-                max_linear_shift = 0.05,
-                delete_single_peak = TRUE,
-                blanks = c("C2","C3")) # negativ controls
+                                         conc_col_name = "area",
+                                         rt_col_name = "time",
+                                         max_diff_peak2mean = 0.02,
+                                         min_diff_peak2peak = 0.08,
+                                         max_linear_shift = 0.05,
+                                         delete_single_peak = TRUE,
+                                         blanks = c("C2","C3")) # negativ controls
 ```
-Now, we can inspect the results by retrieving summaries of the alignment process. The printing method summarises the function call including defaults that have not been explicitly specified during the function call. We also get the relevant information to retrace every step in the alignment:
 
+Now, we can inspect the results by retrieving summaries of the alignment process. The printing method summarises the function call including defaults that have not been explicitly specified during the function call. We also get the relevant information to retrace every step in the alignment:
+    
 ```{r}
 print(aligned_peak_data)
 ```
 
 The quality of an alignment will depend on sensible parameters that facilitate the (i) correction of linear shifts that might fall in a larger range with increasing sample size and (ii) and the variability of retention times. Optimally, linear shifts do not exhaust the range given by `max_linear_shift` completely, which would in turn indicate that not all uncertainties haven been fully compensated for. This can be assessed by four diagnostic plots that can be created alltogether as well as individually.
 
-```{r, fig.width = 6, fig.height = 6}
+```{r,fig.align='center'}
 plot(aligned_peak_data)
 ```
-The distribution of peak number before and after the alignment reveals a noticeable reduction of peaks in the aligned dataset. These changes can be explained by the removal of contamimations (i.e. peaks present in blanks) and the removal of single peaks. Type \code{print(aligned_peak_data)} for details on both. The distribution of shifts size used for linear transformations shows a marginal linear trend across the chromatography run. 
+
+The distribution of peak number before and after the alignment reveals a noticeable reduction of peaks in the aligned dataset. These changes can be explained by the removal of contamimations (i.e. peaks present in blanks) and the removal of single peaks. Type `print(aligned_peak_data)` for details on both. The distribution of shifts sizes used for linear transformations shows a marginal linear trend across the chromatography run and will depend on the of samples relative to the reference while performing the chromatography. 
 Besides the pure number of peaks it is of major interest to inspect the distribution of substances in the pool of samples and access the variation in retention times. This can be investigated simultaneously with a heatmap.
 
-```{r, fig.height = 6, fig.width = 6}
+```{r, fig.height = 6, fig.width = 6,fig.align='center'}
 gc_heatmap(aligned_peak_data,type = "discrete", substance_subset = 1:25, samples_subset = 1:25)
 ```
 The heatmap indicates the presence of a certain substance within a sample by a colour-filled box, whereas the absense is encoded by a white box. Furthermore a colour-gradient is used to indicate the deviation of each retention time from the mean value among all other samples as a measure of variation. 
+
+## Validation
+We additionally tested the performance of `GcalignR` using datasets of three bumble bee species *Bombus bimaculatus*, *B. ephippiatus* and *B. flavifrons* where signatures have been obtained from cephalic labial gland secretions of 24, 20 and 11 individuals respectively. These data have been published as supplementary material by \citet{Dellicour.2013}. Moreover, for a subset of peaks substances have been identified by GC-MS. We used all identified substances (*B. bimaculatus* = 32; *B. ephippiatus* = 42; *B. flavifrons* = 44) to determine error rates for our alignments. Hence, we defined assignments of a single peak as incorrect whenever the majority of other samples was assigned to another row in aligned matrices.
+
+\begin{equation}
+Error = \left[\frac{N_{missaligned}}{N_{total}}\right] 
+\end{equation}  
+
+
+
+
+... to validate the default settings ... and simulated the effect of additional noise levels on the error rate with which substances of known identity (ms-spectra) are classified across samples....
+
 \bibliography{ottensmann-stoffel-hoffman}

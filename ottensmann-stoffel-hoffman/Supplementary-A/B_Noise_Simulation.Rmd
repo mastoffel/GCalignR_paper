@@ -1,5 +1,5 @@
 ---
-title: "Simulate the effects of noise"
+title: "R-code for 'GCalignR. An R package for aligning Gas-Chromatography data'"
 author: "Meinolf Ottensmann, Martin A. Stoffel, Joseph Hoffman"
 output: html_document
 bibliography: bibliography.bib
@@ -11,13 +11,24 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>",cache = FALSE,
     fig.width = 7, fig.height = 7) # warning = FALSE
 ```
 
-## Preamble
-Here, we provide all necessary code for our simulation experiment that was conducted to estimate the effects of noise on the alignment of known substances. *Due to the extensive computation time we include the aligned datasets along with this document*.
-
-## Rational
-Based on the original datasets on bumblebee species published by [@Dellicour.2013] we simulated different noise levels by adding small deviations to randomly selected peaks within each sample. Thereby we use the original data as a unbiased baseline to evaluate the robustness in peak alignments with GCalignR.
+This document provides the code for the validation of alignments presented in our paper. Some parts presented here a computational demanding and run for several hours on a standard computer. Therefore, we provide these data files along with our manuscript.  
 
 ## Prerequisites
+Most functions that are used in this analysis are part of our package **GCalignR**, while some more functions are provided in form of an R script `ChromaSimFunctions`that is available along with this document. In order to run the code you need a subdirectory called `data`
+
+* Installing the most recent version of **GCalignR**
+```{r,eval=FALSE}
+## install devtools
+if (!("devtools" %in% rownames(installed.packages()))) { 
+    install.packages("devtools")
+    } else if (packageVersion("devtools") < 1.6) {
+    install.packages("devtools")
+    }
+## install GCalignR
+devtools::install_github("mastoffel/GCalignR")
+library(GCalignR)
+```
+
 At first we need to align the datasets using the default setting. These will be our baseline estimations.
 ```{r, eval=FALSE}
 library(GCalignR)
