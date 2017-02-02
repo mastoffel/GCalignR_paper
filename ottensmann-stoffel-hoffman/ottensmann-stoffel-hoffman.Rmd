@@ -108,10 +108,10 @@ Sometimes, a single substance has been split up into two different rows. However
 
 ### (4) Post processing
 
-After aligning peaks the package offers several optional post processing steps that allow to cleanup the data. 
+After aligning peaks the package offers several optional post processing steps that allow to clean-up the data. 
 
 ### Removing contaminations
-Among other sources, residues of unwanted chemical substances in the gas chromtography column or within reagents used in the laboratory have the potential to contaminate chemical samples. To get rid of these substances it is generally advised to include control samples. Within `align_chromatograms` those controls can be included in the data set in the same way as a normal sample. By specifying the name of one or more control samples with the `blanks = c("contr1", "contr2"),` all substances present in the control samples are removed from the dataset.
+Among other sources, residues of unwanted chemical substances in the gas chromatography column or within reagents used in the laboratory have the potential to contaminate chemical samples. To get rid of these substances it is generally advised to include control samples. Within `align_chromatograms` those controls can be included in the data set in the same way as a normal sample. By specifying the name of one or more control samples with the `blanks = c("contr1", "contr2"),` all substances present in the control samples are removed from the dataset.
 
 ### Removing single peaks
 
@@ -122,7 +122,7 @@ Sometimes, substances occur purely in a single sample. For comparative approache
 Many multivariate analysis techniques, like those available in \pkg{vegan}, require a `data,frame` of independent variables as input format. Moreover it is generally advisable to normalise substance abundances prior to statistical analysis to correct for variations in the total concentration of samples. This can be done in `GCalignR` with the function `normalise_peaks` which calculate relative abundances within each sample.
 
 ## Workflow
-Here, we demonstrate a typical workflow in `GCalignR` using our seal data. All alignment steps that have been described above are implemented within the function `align_chromatograms`. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing `?align_chromatograms`. As it is outlined in figure \ref{figure:workflow}, the package provides the function `check_input` to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting those errors. This function ist executed internally prior to any alignment.
+Here, we demonstrate a typical workflow in `GCalignR` using our seal data. All alignment steps that have been described above are implemented within the function `align_chromatograms`. A list of all parameters and their description can be assessed from the documentation in the helpfile by typing `?align_chromatograms`. As it is outlined in figure \ref{figure:workflow}, the package provides the function `check_input` to test the input file for typical formatting errors and incomplete data. We encourage to use unique names for samples that consist only of letters, numbers and underscores. If the data fails the test, indicative warnings are returned which guide in correcting those errors. This function is executed internally prior to any alignment.
 
 ```{r}
 check_input(fpath)
@@ -130,45 +130,113 @@ check_input(fpath)
 
 ```{r, eval = FALSE}
 aligned_peak_data <- align_chromatograms(data = peak_data,
-                                         conc_col_name = "area",
-                                         rt_col_name = "time",
-                                         max_diff_peak2mean = 0.02,
-                                         min_diff_peak2peak = 0.08,
-                                         max_linear_shift = 0.05,
-                                         delete_single_peak = TRUE,
-                                         blanks = c("C2","C3")) # negativ controls
+        rt_col_name = "time",
+        max_diff_peak2mean = 0.02,
+        min_diff_peak2peak = 0.08,
+        max_linear_shift = 0.05,
+        delete_single_peak = TRUE,
+        blanks = c("C2","C3"), 
+        write_output = NULL) # change to generate text files
 ```
-
 Now, we can inspect the results by retrieving summaries of the alignment process. The printing method summarises the function call including defaults that have not been explicitly specified during the function call. We also get the relevant information to retrace every step in the alignment:
     
 ```{r}
 print(aligned_peak_data)
 ```
 
-The quality of an alignment will depend on sensible parameters that facilitate the (i) correction of linear shifts that might fall in a larger range with increasing sample size and (ii) and the variability of retention times. Optimally, linear shifts do not exhaust the range given by `max_linear_shift` completely, which would in turn indicate that not all uncertainties haven been fully compensated for. This can be assessed by four diagnostic plots that can be created alltogether as well as individually.
+The quality of an alignment will depend on sensible parameters that facilitate the (i) correction of linear shifts that might fall in a larger range with increasing sample size and (ii) and the variability of retention times. Optimally, linear shifts do not exhaust the range given by `max_linear_shift` completely, which would in turn indicate that not all uncertainties haven been fully compensated for. This can be assessed by four diagnostic plots that can be created altogether as well as individually.
 
 ```{r,fig.align='center'}
 plot(aligned_peak_data)
 ```
 
-The distribution of peak number before and after the alignment reveals a noticeable reduction of peaks in the aligned dataset. These changes can be explained by the removal of contamimations (i.e. peaks present in blanks) and the removal of single peaks. Type `print(aligned_peak_data)` for details on both. The distribution of shifts sizes used for linear transformations shows a marginal linear trend across the chromatography run and will depend on the of samples relative to the reference while performing the chromatography. 
+The distribution of peak number before and after the alignment reveals a noticeable reduction of peaks in the aligned dataset. These changes can be explained by the removal of contaminations (i.e. peaks present in blanks) and the removal of single peaks. Type `print(aligned_peak_data)` for details on both. The distribution of shifts sizes used for linear transformations shows a marginal linear trend across the chromatography run and will depend on the of samples relative to the reference while performing the chromatography. 
 Besides the pure number of peaks it is of major interest to inspect the distribution of substances in the pool of samples and access the variation in retention times. This can be investigated simultaneously with a heatmap.
 
 ```{r, fig.height = 6, fig.width = 6,fig.align='center'}
 gc_heatmap(aligned_peak_data,type = "discrete", substance_subset = 1:25, samples_subset = 1:25)
 ```
-The heatmap indicates the presence of a certain substance within a sample by a colour-filled box, whereas the absense is encoded by a white box. Furthermore a colour-gradient is used to indicate the deviation of each retention time from the mean value among all other samples as a measure of variation. 
+The heatmap indicates the presence of a certain substance within a sample by a colour-filled box, whereas the absence is encoded by a white box. Furthermore a colour-gradient is used to indicate the deviation of each retention time from the mean value among all other samples as a measure of variation. The pattern shown here does not indicate any obvious issues with the aligned dataset. Hence, there is no need to adjust the aligning parameters further and we can move on to analyse the dataset. \par
+Prior to analysing pattern within the aligned data we normalise the peak area to correct for difference in the total concentration among samples and format the data to subsequent ordination approaches using \pkg{vegan}.
+
+```{r}
+scent <- norm_peaks(data = aligned_peak_data,
+                   rt_col_name = "time",
+                   conc_col_name = "area",
+                   out = "data.frame" )
+``` 
+
+### Visualising patterns by ordination
+\pkg{vegan} offers several methods for ordination approaches. We apply a non-metric-multidimensional scaling (NMDS) using a Bray-Curtis dissimilarity in order to investigate differences in chemical profiles between two colonies. The package contains a data frame `peak_factors` that is comprised of three factors ("colony","family" and "age") for all samples that denote the rownames. The visualisation is done using\pkg{ggplot2}. 
+
+```{r, results='hide'}
+library(vegan)
+## factors for each sample of the chemical dataset 
+data("peak_factors") 
+## both datasets have the same rownames and can be sorted accordingly
+scent <- scent[match(row.names(peak_factors),row.names(scent)),] 
+## standard log + 1 transformation
+scent <- log(scent + 1) 
+## NMDS using Bray-Curtis dissimilarities
+scent_nmds <- vegan::metaMDS(comm = scent,distance = "bray") 
+## extract the stress value
+stress <- scent_nmds[["stress"]]
+## get the x and y coordinates
+scent_nmds <- as.data.frame(scent_nmds$points) 
+## add the factor of interest
+scent_nmds <- cbind(scent_nmds,colony = peak_factors[["colony"]]) 
+```
+
+```{r,fig.align='center'}
+## ordiplot with ggplot2
+library(ggplot2)
+ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
+    geom_point(size = 4) + 
+    stat_ellipse(size = 2) + 
+    labs(title = paste0("stress = ", round(stress,2)), x = "MDS1", y = "MDS2") +  
+    theme_void() + 
+    theme(panel.background = element_rect(colour = "black", size = 2,fill = NA))
+```
+
+The ordination plot shows a clear pattern that separates individuals by the breeding colony. \pkg{vegan} offers furthermore permutational test for multivariate analysis of variance ("permutational manova", \citep{Anderson.2001}) that support the observed pattern.
+
+```{r}
+## Testing for a location effect
+vegan::adonis(scent ~ peak_factors[["colony"]],permutations = 9999)
+## Testing for a dispersion effect
+anova(vegan::betadisper(vegan::vegdist(scent,method = "bray"),peak_factors[["colony"]]))
+```
 
 ## Validation
-We additionally tested the performance of `GcalignR` using datasets of three bumble bee species *Bombus bimaculatus*, *B. ephippiatus* and *B. flavifrons* where signatures have been obtained from cephalic labial gland secretions of 24, 20 and 11 individuals respectively. These data have been published as supplementary material by \citet{Dellicour.2013}. Moreover, for a subset of peaks substances have been identified by GC-MS. We used all identified substances (*B. bimaculatus* = 32; *B. ephippiatus* = 42; *B. flavifrons* = 44) to determine error rates for our alignments. Hence, we defined assignments of a single peak as incorrect whenever the majority of other samples was assigned to another row in aligned matrices.
+We analysed the performance of `GcalignR` using datasets of three bumble bee species *Bombus bimaculatus*, *B. ephippiatus* and *B. flavifrons* where signatures have been obtained from cephalic labial gland secretions of 24, 20 and 11 individuals respectively. These data have been published as supplementary material by \citet{Dellicour.2013}. Moreover, for a subset of peaks, substances have been identified by GC-MS. We used all identified substances (*B. bimaculatus* = 32; *B. ephippiatus* = 42; *B. flavifrons* = 44) to determine error rates for our alignments. Hence, we defined assignments of a single peak as incorrect whenever the majority of other samples was assigned to another row in aligned matrices:
 
 \begin{equation}
 Error = \left[\frac{N_{missaligned}}{N_{total}}\right] 
 \end{equation}  
 
+whereby *N* denotes the number of retention times. By systematically changing the two parameters `max_diff_peak2mean` and `min_diff_peak2peak` we explored 100 parameter combinations to demonstrate how parameter values affect the alignment accuracy. \par
+Additionally, we show the effect of noise (i.e. bad quality chromatograms) on the error rate by addition or subtraction of 0.02 or 0.01 minutes to a random subset of peaks per sample. Code and documentation are provided in a single PDF file written in Rmarkdown (S1) together with
+the data (S2).
 
 
+### Results
 
-... to validate the default settings ... and simulated the effect of additional noise levels on the error rate with which substances of known identity (ms-spectra) are classified across samples....
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=13cm]{figures/parameter_space}
+\caption{Effects of alignment parameters on the error rate of three datasets where the identity of a subset of peaks was confirmed by GC-MS \citep{Dellicour.2013}. Each point shows the error in aligning substances for a combination of max\textunderscore diff\textunderscore peak2mean and min\textunderscore diff\textunderscore peak2peak.}
+\label{figure:parameterspace}
+\end{figure} 
+
+The parameter `min_diff_peak2peak` showed the strongest influence on the error rates based on all three bumblebee datasets (figure \ref{figure:parameterspace}). With values below 0.06 minutes the error rate was modest for all datasets. The combination of `min_diff_peak2peak = 0.11` and `max_diff_peak2mean = 0.04` offered the lowest average error rate of 3.24 % (*B. bimaculatus* = 2.79%, *B. ephippiatus* = 3.20%, *B. flavifrons* = 3.72%). \par
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=13cm]{figures/noise_simulation}
+\caption{Additional noise in peak retention times increases the error rate substantially. Therefore, optimal alignments require clearly resolved peaks that need to be extracted prior to using \pkg{GCalignR}}
+\label{figure:noise}
+\end{figure} 
+
+Adding additional noise to the raw retention times increases the error rate in the aligned data substantially. Therefore, we emphasise the importance to check datasets prior to alignment. 
 
 \bibliography{ottensmann-stoffel-hoffman}

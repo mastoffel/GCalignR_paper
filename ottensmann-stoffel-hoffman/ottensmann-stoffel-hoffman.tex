@@ -268,13 +268,13 @@ check_input(fpath)
 \begin{Schunk}
 \begin{Sinput}
 aligned_peak_data <- align_chromatograms(data = peak_data,
-                                         conc_col_name = "area",
-                                         rt_col_name = "time",
-                                         max_diff_peak2mean = 0.02,
-                                         min_diff_peak2peak = 0.08,
-                                         max_linear_shift = 0.05,
-                                         delete_single_peak = TRUE,
-                                         blanks = c("C2","C3")) # negativ controls
+        rt_col_name = "time",
+        max_diff_peak2mean = 0.02,
+        min_diff_peak2peak = 0.08,
+        max_linear_shift = 0.05,
+        delete_single_peak = TRUE,
+        blanks = c("C2","C3"), 
+        write_output = NULL) # change to generate text files
 \end{Sinput}
 \end{Schunk}
 
@@ -367,31 +367,175 @@ The heatmap indicates the presence of a certain substance within a
 sample by a colour-filled box, whereas the absense is encoded by a white
 box. Furthermore a colour-gradient is used to indicate the deviation of
 each retention time from the mean value among all other samples as a
-measure of variation.
+measure of variation. The pattern shown here does not indicate any
+obvious issues with the aligned dataset. Hence, there is no need to
+adjust the aligning parameters further and we can move on to analyse the
+dataset. \par
+Prior to analysing pattern within the aligned data we normalise the peak
+area to correct for difference in the toal concentration among samples
+and format the data to subsequent ordination approaches using
+\pkg{vegan}.
+
+\begin{Schunk}
+\begin{Sinput}
+scent <- norm_peaks(data = aligned_peak_data,
+                   rt_col_name = "time",
+                   conc_col_name = "area",
+                   out = "data.frame" )
+\end{Sinput}
+\end{Schunk}
+
+\subsubsection{Visualising patterns by
+ordination}\label{visualising-patterns-by-ordination}
+
+\pkg{vegan} offers several methods for ordination approaches. We apply a
+non-metric-multidimensional scaling (NMDS) using a Bray-Curtis
+dissimilarity in order to investigate differences in chemical profiles
+between two colonies. The package contains a data frame
+\texttt{peak\_factors} that is comprised of three factors
+(``colony'',``family'' and ``age'') for all samples that denote the
+rownames. The visualisation is done using\pkg{ggplot2}.
+
+\textbackslash{}begin\{Schunk\}
+
+\begin{Sinput}
+library(vegan)
+\end{Sinput}\begin{Soutput}
+#> Loading required package: permute
+\end{Soutput}\begin{Soutput}
+#> Loading required package: lattice
+\end{Soutput}\begin{Soutput}
+#> This is vegan 2.4-2
+\end{Soutput}
+
+\textbackslash{}begin\{Sinput\} \#\# factors for each sample of the
+chemical dataset data(``peak\_factors'') \#\# both datasets have the
+same rownames and can be sorted accordingly scent \textless{}-
+scent{[}match(row.names(peak\_factors),row.names(scent)),{]} \#\#
+standard log + 1 transformation scent \textless{}- log(scent + 1) \#\#
+NMDS using Bray-Curtis dissimilarities scent\_nmds \textless{}-
+vegan::metaMDS(comm = scent,distance = ``bray'') \#\# extract the stress
+value stress \textless{}- scent\_nmds{[}{[}``stress''{]}{]} \#\# get the
+x and y coordinates scent\_nmds \textless{}-
+as.data.frame(scent\_nmds\$points) \#\# add the factor of interest
+scent\_nmds \textless{}- cbind(scent\_nmds,colony =
+peak\_factors{[}{[}``colony''{]}{]}) \textbackslash{}end\{Sinput\}
+\textbackslash{}end\{Schunk\}
+
+\begin{Schunk}
+\begin{Sinput}
+## ordiplot with ggplot2
+library(ggplot2)
+ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
+    geom_point(size = 4) + 
+    stat_ellipse(size = 2) + 
+    labs(title = paste0("stress = ", round(stress,2)), x = "MDS1", y = "MDS2") +  
+    theme_void() + 
+    theme(panel.background = element_rect(colour = "black", size = 2,fill = NA))
+\end{Sinput}
+
+
+\begin{center}\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-11-1} \end{center}
+
+\end{Schunk}
+
+The ordination plot shows a clear pattern that separates individuals by
+the breeding colony. \pkg{vegan} offers furthermore permutational test
+for multivariate analysis of variance (``permutational manova'',
+\citep{Anderson.2001}) that support the observed pattern.
+
+\begin{Schunk}
+\begin{Sinput}
+## Testing for a location effect
+vegan::adonis(scent ~ peak_factors[["colony"]],permutations = 9999)
+\end{Sinput}
+\begin{Soutput}
+#> 
+#> Call:
+#> vegan::adonis(formula = scent ~ peak_factors[["colony"]], permutations = 9999) 
+#> 
+#> Permutation: free
+#> Number of permutations: 9999
+#> 
+#> Terms added sequentially (first to last)
+#> 
+#>                          Df SumsOfSqs MeanSqs F.Model     R2 Pr(>F)    
+#> peak_factors[["colony"]]  1    2.5351 2.53514  11.492 0.1256  1e-04 ***
+#> Residuals                80   17.6486 0.22061         0.8744           
+#> Total                    81   20.1837                 1.0000           
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{Soutput}
+\begin{Sinput}
+## Testing for a dispersion effect
+anova(vegan::betadisper(vegan::vegdist(scent,method = "bray"),peak_factors[["colony"]]))
+\end{Sinput}
+\begin{Soutput}
+#> Analysis of Variance Table
+#> 
+#> Response: Distances
+#>           Df   Sum Sq   Mean Sq F value Pr(>F)
+#> Groups     1 0.000347 0.0003474   0.095 0.7587
+#> Residuals 80 0.292452 0.0036557
+\end{Soutput}
+\end{Schunk}
 
 \subsection{Validation}\label{validation}
 
-We additionally tested the performance of \texttt{GcalignR} using
-datasets of three bumble bee species \emph{Bombus bimaculatus}, \emph{B.
-ephippiatus} and \emph{B. flavifrons} where signatures have been
-obtained from cephalic labial gland secretions of 24, 20 and 11
-individuals respectively. These data have been published as
-supplementary material by \citet{Dellicour.2013}. Moreover, for a subset
-of peaks substances have been identified by GC-MS. We used all
-identified substances (\emph{B. bimaculatus} = 32; \emph{B. ephippiatus}
-= 42; \emph{B. flavifrons} = 44) to determine error rates for our
-alignments. Hence, we defined assignments of a single peak as incorrect
-whenever the majority of other samples was assigned to another row in
-aligned matrices.
+We analysed the performance of \texttt{GcalignR} using datasets of three
+bumble bee species \emph{Bombus bimaculatus}, \emph{B. ephippiatus} and
+\emph{B. flavifrons} where signatures have been obtained from cephalic
+labial gland secretions of 24, 20 and 11 individuals respectively. These
+data have been published as supplementary material by
+\citet{Dellicour.2013}. Moreover, for a subset of peaks, substances have
+been identified by GC-MS. We used all identified substances (\emph{B.
+bimaculatus} = 32; \emph{B. ephippiatus} = 42; \emph{B. flavifrons} =
+44) to determine error rates for our alignments. Hence, we defined
+assignments of a single peak as incorrect whenever the majority of other
+samples was assigned to another row in aligned matrices:
 
 \begin{equation}
-Error = \left[\frac{N_{missaligned}}{N\textunderscore total}\right] 
+Error = \left[\frac{N_{missaligned}}{N_{total}}\right] 
 \end{equation}
 
-\ldots{} to validate the default settings \ldots{} and simulated the
-effect of additional noise levels on the error rate with which
-substances of known identity (ms-spectra) are classified across
-samples\ldots{}.
+whereby \emph{N} denotes the number of retention times. By
+systematically changing the two parameters \texttt{max\_diff\_peak2mean}
+and \texttt{min\_diff\_peak2peak} we explored 100 parameter combinations
+to demonstrate how parameter values affect the alignment accuracy. \par
+Additionally, we show the effect of noise (i.e.~bad quality
+chromatograms) on the error rate by addition or substraction of 0.02 or
+0.01 minutes to a random subset of peaks per sample. Code and
+documentation are provided in a single PDF file written in Rmarkdown
+(S1) together with the data (S2).
+
+\subsubsection{Results}\label{results}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=13cm]{figures/parameter_space}
+\caption{Effects of alignment parameters on the error rate of three datasets where the identity of a subset of peaks was confirmed by GC-MS [@Dellicour.2013]. Each point shows the error in aligning substances for a combination of max\textunderscore diff\textunderscore peak2mean and min\textunderscore diff\textunderscore peak2peak.}
+\label{figure:parameterspace}
+\end{figure}
+
+The parameter \texttt{min\_diff\_peak2peak} shows the strongest
+influence on the error rates based on all three bumblebee datsets
+(figure \ref{figure:parameterspace}). With values below 0.06 minutes the
+error rate is modest for all datasets. The combination of
+\texttt{min\_diff\_peak2peak\ =\ 0.11} and
+\texttt{max\_diff\_peak2mean\ =\ 0.04} offers the lowest average error
+rate of 3.24 \% (\emph{B. bimaculatus} = 2.79\%, \emph{B. ephippiatus} =
+3.20\%, \emph{B. flavifrons} = 3.72\%). \par
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=13cm]{figures/noise_simulation}
+\caption{Additional noise in peak retention times increases the error rate substantially. Therefore, optimal alignments require clearly resolved peaks that need to be extracted prior to using \pkg{GCalignR}}
+\label{figure:noise}
+\end{figure}
+
+Adding additional noise to the raw retention times increases the error
+rate in the aligned data substantially. Therefore, we emphasise the
+importance to check datasets prior to alignment.
 
 \bibliography{ottensmann-stoffel-hoffman}
 

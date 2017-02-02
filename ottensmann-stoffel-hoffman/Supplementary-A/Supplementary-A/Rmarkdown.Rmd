@@ -13,7 +13,7 @@ knitr::opts_chunk$set(cache = FALSE, fig.width = 7, fig.height = 7,tidy = TRUE,h
 options(width = 80)
 ```
 
-This document provides the code for the validation of alignments presented in our paper. Some parts presented here a computational demanding and run for several hours on a standard computer. Therefore, we provide these data files along with our manuscript.  
+This document provides the code for the validation of alignments presented in our paper. Some parts presented here a computational demanding and run for several hours on a standard computer. Therefore, we provide the final dataset along with this document.  
 
 ## Prerequisites
 Most functions that are used in this analysis are part of our package **GCalignR**, while some more functions are provided in form of R scripts that are available along with this document in the subdirectory `R`. In order to run the code you need to have a subdirectory called `data` that contains the raw data.
@@ -128,7 +128,7 @@ scatter3D(
     cex.lab = 1.25,
     cex.axis = 1.25,
     cex.main = 2,
-    zlim = c(0,0.3))
+    zlim = c(0,0.2))
 
 with(errors_beph, scatter3D(
     x = p2p,
@@ -149,7 +149,7 @@ with(errors_beph, scatter3D(
     cex.lab = 1.25,
     cex.axis = 1.25,
     cex.main = 2,
-    zlim = c(0,0.3)))
+    zlim = c(0,0.2)))
 
 with(errors_bfla, scatter3D(
     x = p2p ,
@@ -170,7 +170,31 @@ with(errors_bfla, scatter3D(
     cex.lab = 1.25,
     cex.axis = 1.25,
     cex.main = 2,
-    zlim = c(0,0.3))) 
+    zlim = c(0,0.2))) 
+```
+
+The exploration of the parameter space shows that the parameter `min_diff_peak2peak` has the greatest potential to change the error rate and thereby the accuracy of an alignment. Using small values allows a fine scalled grouping of retention times by penalising deviations strongly, but seems not appropriate for the three datasets. Allowing larger differences between unique peaks favours the correct assignment of more variable substances. 
+
+* Determining the best parameters
+The plot clearly indicates a large area in the parameter space that yields to similarly small errors and therefore demonstrates the robustness of `align_chromatograms`. By estimating the average error over all three datasets we select the best combination of `min_diff_peak2peak` and `max_diff_peak2mean` as default values.   
+
+```{r}
+## combine estimates in a data frame
+df <- data.frame(p2p = errors_bbim[["p2p"]], 
+                 p2m = errors_bbim[["p2m"]],
+                 bbim = errors_bbim[["error"]],
+                 beph = errors_beph[["error"]],
+                 bfla = errors_bfla[["error"]])
+## calculate mean error rates
+df[["mean"]] <- apply(df[,3:5],1,mean)
+head(df)
+## best mean parameters
+df[which(df[["mean"]] == min(df[["mean"]])),]
+
+## best parameters for single datasets
+df[which(df[["bbim"]] == min(df[["bbim"]])),]
+df[which(df[["beph"]] == min(df[["beph"]])),]
+df[which(df[["bfla"]] == min(df[["bfla"]])),]
 ```
 
 ## Simulate the effect of additional noise
@@ -313,16 +337,16 @@ save(df,file = "data/df.RData")
 
 ```{r, fig.align='center'}
 load("data/df.RData")
-ggplot2::ggplot(data = df,aes(x = noise, y = error, group = id, col = id)) + 
+plot <- ggplot2::ggplot(data = df,aes(x = noise, y = error, group = id, col = id)) + 
     geom_smooth(level = 0.95) + 
-    theme_bw(base_size = 12) + 
+    theme_bw(base_size = 14) + 
     theme(aspect.ratio = 1) +
     xlab("Additional noise level") +
     ylab("Error rate") +
     scale_x_continuous(breaks = seq(0,1,0.1)) +
     scale_y_continuous(breaks = seq(0,0.3,0.02)) +
     scale_colour_manual(values = c("#1B9E77", "#D95F02", "#7570B3"),
-                        name = "Datasets",
+                        name = "",
                         breaks = c("bbim", "beph", "bfla"),
                         labels = c("Bombus bimaculatus",
                                  "B. ephippiatus",
@@ -331,8 +355,12 @@ ggplot2::ggplot(data = df,aes(x = noise, y = error, group = id, col = id)) +
                             label.theme = element_text(
                                 face = "italic", angle = 0,
                                 size = 11)))
+plot
+```
+```{r,echo=FALSE}
+ggsave(plot,filename = "data/noise_simulation.tif",device = "tiff",dpi = 300,width = 8,height = 8,units = "in")
 ```
 
-The plot reveals the potential of high noise levels to increase the error rate. Errors typically resemble the fact that a few retention times associated to a certain substance were not combined with the majortiy of retention times of the same substance because the initially formed groups have been too far a part (i.e. distance greater than `min_diff_peak2peak). An inspection of heatmaps and aligned data tables will help in these situations to identify such cases. 
+The plot reveals the potential of high noise levels to increase the error rate. Errors typically resemble the fact that a few retention times associated to a certain substance were not combined with the majortiy of retention times of the same substance because the initially formed groups have been too far a part (i.e. distance greater than `min_diff_peak2peak`). An inspection of heatmaps and aligned data tables will help in these situations to identify such cases. 
 
 ## References 
