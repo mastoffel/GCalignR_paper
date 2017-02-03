@@ -113,6 +113,13 @@ horizontally.
 
 \begin{Schunk}
 \begin{Sinput}
+## load the package
+library(GCalignR)
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
 ## Path to the dataset
 fpath <- system.file("extdata", "peak_data.txt", package = "GCalignR")
 \end{Sinput}
@@ -151,16 +158,14 @@ A reference is selected automatically by searching for the sample with
 the highest average similarity to all other samples based on the number
 of shared peaks prior to alignment. Alternatively, a chromatogram can be
 included that contains peaks of an internal standard which peaks are
-\emph{\{a-priori\}} known to occur in all samples. In this case, the
-sample is named \texttt{reference} and will be removed after the
-alignment was conducted.
-
-\newpage
+\emph{a-priori} known to occur in all samples. In this case, the sample
+is named \texttt{reference} and will be removed after the alignment was
+conducted.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=13cm]{figures/algorithm}
-\caption{Overview of the algorithm performed by GCalignR. Rows of matrices correspond to substances, columns are samples. Zeros indicate absence of peaks and are ignored in calculations. \textbf{1}. Chromatograms are linearly shifted with respect to a reference (S2). \textbf{2}. From left to right the first four steps from the input matrix to the final alignment are shown. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all samples in previous columns until the last column is reached. \textbf{3}. Coloured cells represent conflicting retention times that show a greater difference than specified. If merging does not result in the loss of any data, rows are merged. \textbf{4}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. Unique peaks present in only a single individual are not of interest for similarity analyses and can be removed as well.}
+\caption{Overview of the algorithm performed by GCalignR. Rows of matrices correspond to substances, columns are samples. Zeros indicate absence of peaks and are ignored in calculations. \textbf{A}. Chromatograms are linearly shifted with respect to a reference (S2). \textbf{B}. From left to right the first four steps from the input matrix to the final alignment are shown. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all samples in previous columns until the last column is reached. \textbf{C}. Coloured cells represent conflicting retention times that show a greater difference than specified. If merging does not result in the loss of any data, rows are merged. \textbf{D}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. \textbf{E}. Unique peaks present in only a single individual are not of interest for similarity analyses and can be removed as well.}
 \label{figure:algorithm}
 \end{figure}
 
@@ -170,14 +175,14 @@ The core of the alignment procedure is based on clustering of individual
 peaks across samples. This is performed by examining retention times
 within single rows, where samples are compared consecutively with all
 previous samples starting with the second column (figure
-\ref{figure:algorithm} B):\par
+\ref{figure:algorithm} B):
 
 \begin{equation}
 rt_{m} > \left(\frac{\sum_{i=1}^{m-1}rt_{i}}{m-1}\right) + max\textunderscore peak2mean
 \end{equation}
 
 If the examined peak is moved into the next row, whereas all previous
-samples are moved \par
+samples are moved
 
 \begin{equation}
 rt_{m} < \left(\frac{\sum_{i=1}^{m-1}rt_{i}}{m-1}\right) - max\textunderscore peak2mean
@@ -209,12 +214,12 @@ with \emph{min\_diff\_peak2peak}. \par
 \subsubsection{(4) Post processing}\label{post-processing}
 
 After aligning peaks the package offers several optional post processing
-steps that allow to cleanup the data.
+steps that allow to clean-up the data.
 
 \subsubsection{Removing contaminations}\label{removing-contaminations}
 
 Among other sources, residues of unwanted chemical substances in the gas
-chromtography column or within reagents used in the laboratory have the
+chromatography column or within reagents used in the laboratory have the
 potential to contaminate chemical samples. To get rid of these
 substances it is generally advised to include control samples. Within
 \texttt{align\_chromatograms} those controls can be included in the data
@@ -234,12 +239,14 @@ allows to do so by setting the \texttt{delete\_single\_peak} argument to
 \subsubsection{Normalisation}\label{normalisation}
 
 Many multivariate analysis techniques, like those available in
-\pkg{vegan}, require a \texttt{data,frame} of independent variables as
+\pkg{vegan}, require a \texttt{data\ frame} of independent variables as
 input format. Moreover it is generally advisable to normalise substance
 abundances prior to statistical analysis to correct for variations in
 the total concentration of samples. This can be done in
 \texttt{GCalignR} with the function \texttt{normalise\_peaks} which
-calculate relative abundances within each sample.
+calculates relative abundancies within each sample. Even if the datast
+already included the releative area for instance, a normalisation has to
+be repeated after any filtering of peaks was conducted.
 
 \subsection{Workflow}\label{workflow}
 
@@ -253,8 +260,8 @@ the function \texttt{check\_input} to test the input file for typical
 formatting errors and incomplete data. We encourage to use unique names
 for samples that consist only of letters, numbers and underscores. If
 the data fails the test, indicative warnings are returned which guide in
-correcting those errors. This function ist executed internally prior to
-any alignment.
+correcting those errors. This function is executed internally prior to
+any alignment, hence the data needs to pass the checks.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -322,27 +329,31 @@ print(aligned_peak_data)
 \end{Schunk}
 
 The quality of an alignment will depend on sensible parameters that
-facilitate the (i) correction of linear shifts that might fall in a
-larger range with increasing sample size and (ii) and the variability of
-retention times. Optimally, linear shifts do not exhaust the range given
-by \texttt{max\_linear\_shift} completely, which would in turn indicate
-that not all uncertainties haven been fully compensated for. This can be
-assessed by four diagnostic plots that can be created alltogether as
-well as individually.
+facilitate the (\emph{i}) correction of linear shifts that might fall in
+a larger range with increasing sample size and (\emph{ii}) and the
+variability of retention times. Optimally, linear shifts do not exhaust
+the range given by \texttt{max\_linear\_shift} completely, which would
+in turn indicate that not all systematic deviations haven been fully
+compensated. This can be assessed by four diagnostic plots that can be
+created altogether as well as individually.
 
 \begin{Schunk}
 \begin{Sinput}
 plot(aligned_peak_data)
 \end{Sinput}
+\begin{figure}
 
+{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-7-1} 
 
-\begin{center}\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-7-1} \end{center}
+}
 
+\caption[Diagnostic plots summarise aligned datasets]{Diagnostic plots summarise aligned datasets}\label{fig:unnamed-chunk-7}
+\end{figure}
 \end{Schunk}
 
-The distribution of peak number before and after the alignment reveals a
-noticeable reduction of peaks in the aligned dataset. These changes can
-be explained by the removal of contamimations (i.e.~peaks present in
+The distribution of peak numbers before and after the alignment reveals
+a noticeable reduction of peaks in the aligned dataset. These changes
+can be explained by the removal of contaminations (i.e.~peaks present in
 blanks) and the removal of single peaks. Type
 \texttt{print(aligned\_peak\_data)} for details on both. The
 distribution of shifts sizes used for linear transformations shows a
@@ -355,29 +366,34 @@ simultaneously with a heatmap.
 
 \begin{Schunk}
 \begin{Sinput}
-gc_heatmap(aligned_peak_data,type = "discrete", substance_subset = 1:25, samples_subset = 1:25)
+gc_heatmap(aligned_peak_data,type = "discrete",
+           substance_subset = 1:25, samples_subset = 1:25)
 \end{Sinput}
+\begin{figure}
 
+{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-8-1} 
 
-\begin{center}\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-8-1} \end{center}
+}
 
+\caption[Heatmaps allow to inspect the distribution of substances across samples as well as the variability of their retention times]{Heatmaps allow to inspect the distribution of substances across samples as well as the variability of their retention times.}\label{fig:unnamed-chunk-8}
+\end{figure}
 \end{Schunk}
 
 The heatmap indicates the presence of a certain substance within a
-sample by a colour-filled box, whereas the absense is encoded by a white
+sample by a colour-filled box, whereas the absence is encoded by a white
 box. Furthermore a colour-gradient is used to indicate the deviation of
 each retention time from the mean value among all other samples as a
 measure of variation. The pattern shown here does not indicate any
 obvious issues with the aligned dataset. Hence, there is no need to
 adjust the aligning parameters further and we can move on to analyse the
-dataset. \par
-Prior to analysing pattern within the aligned data we normalise the peak
-area to correct for difference in the toal concentration among samples
-and format the data to subsequent ordination approaches using
+dataset. Prior to analysing pattern within the aligned data we normalise
+the peak area to correct for difference in the total concentration among
+samples and format the data to subsequent ordination approaches using
 \pkg{vegan}.
 
 \begin{Schunk}
 \begin{Sinput}
+## normalise the peak area 
 scent <- norm_peaks(data = aligned_peak_data,
                    rt_col_name = "time",
                    conc_col_name = "area",
@@ -386,7 +402,7 @@ scent <- norm_peaks(data = aligned_peak_data,
 \end{Schunk}
 
 \subsubsection{Visualising patterns by
-ordination}\label{visualising-patterns-by-ordination}
+ordination}\label{visualising-patterns-by-ordination}
 
 \pkg{vegan} offers several methods for ordination approaches. We apply a
 non-metric-multidimensional scaling (NMDS) using a Bray-Curtis
@@ -394,33 +410,40 @@ dissimilarity in order to investigate differences in chemical profiles
 between two colonies. The package contains a data frame
 \texttt{peak\_factors} that is comprised of three factors
 (``colony'',``family'' and ``age'') for all samples that denote the
-rownames. The visualisation is done using\pkg{ggplot2}.
+rownames. The visualisation is done using \pkg{ggplot2}.
 
-\textbackslash{}begin\{Schunk\}
-
+\begin{Schunk}
 \begin{Sinput}
-library(vegan)
-\end{Sinput}\begin{Soutput}
-#> Loading required package: permute
-\end{Soutput}\begin{Soutput}
-#> Loading required package: lattice
-\end{Soutput}\begin{Soutput}
-#> This is vegan 2.4-2
+## factors for each sample of the chemical dataset 
+head(peak_factors) 
+\end{Sinput}
+\begin{Soutput}
+#>     colony family age
+#> M10    FWB     10   1
+#> M12    FWB     12   1
+#> M14    FWB     14   1
+#> M15    SSB     15   1
+#> M16    FWB     16   1
+#> M17    FWB     17   1
 \end{Soutput}
+\begin{Sinput}
+## both datasets have the same rownames and can be sorted accordingly
+scent <- scent[match(row.names(peak_factors),row.names(scent)),] 
+## standard log + 1 transformation
+scent <- log(scent + 1)
+\end{Sinput}
+\end{Schunk}
 
-\textbackslash{}begin\{Sinput\} \#\# factors for each sample of the
-chemical dataset data(``peak\_factors'') \#\# both datasets have the
-same rownames and can be sorted accordingly scent \textless{}-
-scent{[}match(row.names(peak\_factors),row.names(scent)),{]} \#\#
-standard log + 1 transformation scent \textless{}- log(scent + 1) \#\#
-NMDS using Bray-Curtis dissimilarities scent\_nmds \textless{}-
-vegan::metaMDS(comm = scent,distance = ``bray'') \#\# extract the stress
-value stress \textless{}- scent\_nmds{[}{[}``stress''{]}{]} \#\# get the
-x and y coordinates scent\_nmds \textless{}-
-as.data.frame(scent\_nmds\$points) \#\# add the factor of interest
-scent\_nmds \textless{}- cbind(scent\_nmds,colony =
-peak\_factors{[}{[}``colony''{]}{]}) \textbackslash{}end\{Sinput\}
-\textbackslash{}end\{Schunk\}
+\begin{Schunk}
+\begin{Sinput}
+## NMDS using Bray-Curtis dissimilarities
+scent_nmds <- vegan::metaMDS(comm = scent,distance = "bray")
+## get the x and y coordinates
+scent_nmds <- as.data.frame(scent_nmds[["points"]]) 
+## add the factor of interest
+scent_nmds <- cbind(scent_nmds,colony = peak_factors[["colony"]]) 
+\end{Sinput}
+\end{Schunk}
 
 \begin{Schunk}
 \begin{Sinput}
@@ -429,14 +452,19 @@ library(ggplot2)
 ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
     geom_point(size = 4) + 
     stat_ellipse(size = 2) + 
-    labs(title = paste0("stress = ", round(stress,2)), x = "MDS1", y = "MDS2") +  
+    labs(title = "", x = "MDS1", y = "MDS2") +  
     theme_void() + 
-    theme(panel.background = element_rect(colour = "black", size = 2,fill = NA))
+    theme(panel.background = element_rect(colour = "black", size = 2,fill = NA),
+          aspect.ratio = 1)
 \end{Sinput}
+\begin{figure}
 
+{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-12-1} 
 
-\begin{center}\includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-11-1} \end{center}
+}
 
+\caption[A NMDS plot shows the similarity of individuals within colonies]{A NMDS plot shows the similarity of individuals within colonies}\label{fig:unnamed-chunk-12}
+\end{figure}
 \end{Schunk}
 
 The ordination plot shows a clear pattern that separates individuals by
@@ -489,21 +517,24 @@ labial gland secretions of 24, 20 and 11 individuals respectively. These
 data have been published as supplementary material by
 \citet{Dellicour.2013}. Moreover, for a subset of peaks, substances have
 been identified by GC-MS. We used all identified substances (\emph{B.
-bimaculatus} = 32; \emph{B. ephippiatus} = 42; \emph{B. flavifrons} =
-44) to determine error rates for our alignments. Hence, we defined
-assignments of a single peak as incorrect whenever the majority of other
-samples was assigned to another row in aligned matrices:
+bimaculatus}, 717 peaks of 32 substances; \emph{B. ephippiatus}, 782 and
+42; \emph{B. flavifrons} 457 and 44) to determine error rates for our
+alignments. Hence, we calculated the error rate as the ratio between
+incorrectly assigned retention times and the total number of retention
+times:
 
 \begin{equation}
 Error = \left[\frac{N_{missaligned}}{N_{total}}\right] 
 \end{equation}
 
-whereby \emph{N} denotes the number of retention times. By
-systematically changing the two parameters \texttt{max\_diff\_peak2mean}
-and \texttt{min\_diff\_peak2peak} we explored 100 parameter combinations
-to demonstrate how parameter values affect the alignment accuracy. \par
-Additionally, we show the effect of noise (i.e.~bad quality
-chromatograms) on the error rate by addition or substraction of 0.02 or
+whereby \emph{N} denotes the number of retention times and peaks where
+treated as missaligned whenever they were not assigned to the row that
+defines the mode of a given substance. By systematically changing the
+two parameters \texttt{max\_diff\_peak2mean} and
+\texttt{min\_diff\_peak2peak} we explored 100 parameter combinations to
+demonstrate how parameter values affect the alignment accuracy. \par
+Additionally, we simulated the effect of noise (i.e.~bad quality
+chromatograms) on the error rate by addition or subtraction of 0.02 or
 0.01 minutes to a random subset of peaks per sample. Code and
 documentation are provided in a single PDF file written in Rmarkdown
 (S1) together with the data (S2).
@@ -513,18 +544,18 @@ documentation are provided in a single PDF file written in Rmarkdown
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=13cm]{figures/parameter_space}
-\caption{Effects of alignment parameters on the error rate of three datasets where the identity of a subset of peaks was confirmed by GC-MS [@Dellicour.2013]. Each point shows the error in aligning substances for a combination of max\textunderscore diff\textunderscore peak2mean and min\textunderscore diff\textunderscore peak2peak.}
+\caption{Effects of alignment parameters on the error rate of three datasets where the identity of a subset of peaks was confirmed by GC-MS \citep{Dellicour.2013}. Each point shows the error in aligning substances for a combination of max\textunderscore diff\textunderscore peak2mean and min\textunderscore diff\textunderscore peak2peak.}
 \label{figure:parameterspace}
 \end{figure}
 
-The parameter \texttt{min\_diff\_peak2peak} shows the strongest
-influence on the error rates based on all three bumblebee datsets
+The parameter \texttt{min\_diff\_peak2peak} showed the strongest
+influence on the error rates based on all three bumblebee datasets
 (figure \ref{figure:parameterspace}). With values below 0.06 minutes the
-error rate is modest for all datasets. The combination of
+error rate was modest for all datasets. The combination of
 \texttt{min\_diff\_peak2peak\ =\ 0.11} and
-\texttt{max\_diff\_peak2mean\ =\ 0.04} offers the lowest average error
+\texttt{max\_diff\_peak2mean\ =\ 0.04} offered the lowest average error
 rate of 3.24 \% (\emph{B. bimaculatus} = 2.79\%, \emph{B. ephippiatus} =
-3.20\%, \emph{B. flavifrons} = 3.72\%). \par
+3.20\%, \emph{B. flavifrons} = 3.72\%).
 
 \begin{figure}[htbp]
 \centering
@@ -537,7 +568,38 @@ Adding additional noise to the raw retention times increases the error
 rate in the aligned data substantially. Therefore, we emphasise the
 importance to check datasets prior to alignment.
 
-\bibliography{ottensmann-stoffel-hoffman}
+\subsection{Final remarks}\label{final-remarks}
+
+\texttt{GcalignR} is primarily intended as a preprocessing tool in the
+analysis of complex chemical signatures of animals where similarity
+patterns are of interest rather than analysing the role of specific
+compounds. Therefore, we prioritise an objective and fast alignment that
+is not claimed to be freed of any errors, which are not possible to
+avoid without additional sources of information such as GC-MS. It is in
+the responsibility of the user to critically analysis the data before
+and after alignment.
+
+\subsection{Availability}\label{availability}
+
+The current stable version requires at least R 3.2.5 and is available on
+cran.
+
+\begin{Schunk}
+\begin{Sinput}
+install.packages("GCalignR")
+\end{Sinput}
+\end{Schunk}
+
+We aim to extend the functionalities of \pkg{GCalignR} in future and the
+developmental version can be downloaded from GitHub within R using
+\href{https://cran.r-project.org/web/packages/devtools/index.html}{\CRANpkg{devtools}}
+\citep{Oksanen.2016}
+
+\begin{Schunk}
+\begin{Sinput}
+devtools::install_github("mastoffel/GCalignR", build_vignettes = TRUE)
+\end{Sinput}
+\end{Schunk}\bibliography{ottensmann-stoffel-hoffman}
 
 \address{%
 Meinolf Ottensmann\\
