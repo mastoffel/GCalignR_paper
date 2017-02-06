@@ -1,43 +1,50 @@
-###########################################
-### Functions to simulate chromatograms ###
-###########################################
+### Functions to simulate chromatograms 
+### -----------------------------------
 
-add_peak_error <- function(chroma,p,rt_col_name,conc_col_name,distr = c(-.02,-.01,.01,.02)) {
 ### add errors to a proportion ("p") of peaks of one sample ("chroma")
+add_peak_error <- function(chroma,p,rt_col_name,conc_col_name,distr = c(-.02,-.01,.01,.02)) {
     
 ### 1.) Gaussian distribution of errors
+### -----------------------------------
 error <- sample(x = distr, 
          replace = T,prob = c(0.15,0.35,0.35,0.15),
          size = round(p * length(chroma[[rt_col_name]][!is.na(chroma[[rt_col_name]])]))) 
 
-### 2.) Select peaks to manipulate
+### 2.) Select peaks to manipulate. probability is inversely correlated to the area
+### ------------------------------
 index <- sample(x = 1:length(chroma[[rt_col_name]][!is.na(chroma[[rt_col_name]])]), 
                   size = length(error), 
                   prob = chroma[[conc_col_name]][!is.na(chroma[[conc_col_name]])]/sum(chroma[[conc_col_name]][!is.na(chroma[[conc_col_name]])])) 
 
 ### 3.) Get retention times 
+### -----------------------
 retention_time <- chroma[[rt_col_name]][!is.na(chroma[[rt_col_name]])]
 
 ### 4.) Define manipulated retention times
+### --------------------------------------
 retention_time[index] <- retention_time[index] + error 
 
 ### 5.) Check for artefacts (i.e. duplicated retention times)
+### ---------------------------------------------------------
 if (any(duplicated(retention_time))) { 
 conflict_rt <- which(duplicated(retention_time) == "TRUE") # index of first rt
-conflict_rt <- unlist(lapply(conflict_rt, function(x) { # get rt 
+conflict_rt <- unlist(lapply(conflict_rt, function(x) { # get rt
+    # solve possible conflicts
    if (!(x %in% index)) { 
     if ((x + 1) %in% index) x <- x + 1
     if ((x - 1) %in% index) x <- x - 1 
   } 
   return(x)
 }))
-error[conflict_rt] <- error[conflict_rt] * -1 # solve by error *-1
+error[conflict_rt] <- error[conflict_rt] * -1 
 }
  
 ### 6.) Do the manipulations
+### ------------------------
   chroma[[rt_col_name]][index] <- chroma[[rt_col_name]][index] + error
   
 ### 7.) Save errors for subsequent use
+### ----------------------------------
 x <- numeric(length = length(retention_time))
 x[index] <- error
   return(list(chroma = chroma, error = x))
@@ -59,7 +66,7 @@ for (s in 1:as.numeric(manipulated_chroma[["Logfile"]][["Input"]][["Samples"]]))
     rt2 <- rt2[rt2 > 0 & !is.na(rt2)] 
     index <- match(rt2,as.vector(manipulated_chroma[["aligned"]][[rt_col_name]][[s + 1]]),nomatch = 0)
     
-    # warning. Need to think what it means!
+    # warning if peak have been swapped
     if (sum(area2 - area1) != 0) print(paste0("S",s,": Order of Peaks differ between alignments!"))
     area1 <- area1[(match(area2,area1,nomatch = 0))]              
     rt1 <- rt1[(match(area2,area1,nomatch = 0))]

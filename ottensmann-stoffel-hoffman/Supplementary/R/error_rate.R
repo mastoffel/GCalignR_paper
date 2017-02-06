@@ -81,6 +81,7 @@ for (n in 1:length(ref[["Compounds"]])) {
 temp <- unlist((ref[1:nrow(ref),3:ncol(ref)]))
 N <- length(temp[!is.na(temp) & temp > 0])
 N1 <- length(unlist(indices))
+## check that retention times have been found. 
 if (N > N1) warning("Not all retention times were matched")
 # check
 error <- x/N

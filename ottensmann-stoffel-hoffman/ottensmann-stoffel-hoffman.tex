@@ -39,42 +39,42 @@ mass-spectrometry (GC-MS) allows to identify specific substances
 \citep{Caspers.2011}. \par
 However, before similarity patterns across samples can be analysed, it
 is essential to align compounds. The alignment of samples has to account
-for drifts in the retention times of peaks which are caused by subtle,
-random and often unavoidable variations of the chromatography machine
-parameters \citep{Pierce.2005}. Surprisingly, studies on mammalian or
-avian chemical communication often rely on manual alignment rather than
-(semi-)automated algorithms, but this approach bears three severe
-drawbacks: (1) For larger sample sizes, this task becomes extremely time
-consuming and inefficient (2) The researcher may bias the alignment due
-to subjective experience and expectations. (3) The data analytical
-pipeline from the raw gas-chromatography data to the results of the
-statistical analysis is not reproducible. (citations for the first two
-points necessary, but not easy to get!) Several alignment algorithms
-have been proposed to overcome these issues, but these focus nearly
-exclusively on GC-MS data \citep{Pierce.2005, Robinson.2007,Jiang.2013}
-and only some are implemented in web-based tools
-\citep{Hoffmann.2009, Wang.2010} or independent software
-\citep{Dellicour.2013}. \par
+for pertubations in the retention times of peaks which are caused by
+subtle, random and often unavoidable variations of the chromatography
+machine parameters such as as changes of the ambient temperature, flow
+rate of the carrier gas or column aging \citep{Scott.2003, Pierce.2005}.
+Surprisingly, studies on mammalian or avian chemical communication often
+rely on manual alignment rather than (semi-)automated algorithms, but
+this approach bears three severe drawbacks: (1) For larger sample sizes,
+this task becomes extremely time consuming and inefficient (2) The
+researcher may bias the alignment due to subjective experience and
+expectations. (3) The data analytical pipeline from the raw
+gas-chromatography data to the results of the statistical analysis is
+not reproducible. Several alignment algorithms have been proposed to
+overcome these issues, but these focus nearly exclusively on GC-MS data
+\citep{Pierce.2005, Robinson.2007,Jiang.2013} and only some are
+implemented in web-based tools \citep{Hoffmann.2009, Wang.2010} or are
+available as independent software \citep{Dellicour.2013}. \par
 Here, we introduce \texttt{GCalignR}, an R package that implements a
-simple algorithm to align peaks purely from retention time data obtained
-by GC and provides sophisticated visualisations for the evaluation of
-the alignment quality. \texttt{GCalignR} was specifically developed as a
-tool for pre-processing GC data from animal skin and avian preen glands
-prior to subsequent statistical analysis. In brief, the algorithm
-consists of two main steps: (1) Systematic shifts of chromatograms are
-corrected by applying appropriate linear shifts to whole chromatograms
-based on a single reference. (2) Retention times of individual peaks are
-grouped iteratively together with homologous peaks of other samples and
-aligned within the same row in a retention time matrix. The quality of
-this grouping procedure can be adjusted by three parameters that are
-described in detail below. Among several optional processing steps, the
-package allows to remove peaks that represent contaminations, which are
-identified due to their presence in negative control samples, henceforth
-called blanks. For an easy interpretation of the quality of an alignment
-we implemented several diagnostic plots that allow to access the aligned
-data visually. Furthermore, we demonstrate a complete workflow from
-chemical raw data to multivariate analyses with the popular and widely
-used
+simple algorithm to align peaks purely based on retention time data
+obtained by GC and provides sophisticated visualisations for the
+evaluation of the alignment quality. \texttt{GCalignR} was specifically
+developed as a tool for pre-processing GC data from animal skin and
+avian preen glands prior to subsequent statistical analysis. In brief,
+the algorithm consists of two main steps: (1) Systematic shifts of
+chromatograms are corrected by applying appropriate linear shifts to
+whole chromatograms based on a single reference. (2) Retention times of
+individual peaks are grouped iteratively together with homologous peaks
+of other samples and aligned within the same row in a retention time
+matrix. The quality of this grouping procedure can be adjusted by three
+parameters that are described in detail below. Among several optional
+processing steps, the package allows to remove peaks that represent
+contaminations, which are identified due to their presence in negative
+control samples, henceforth called blanks. For an easy interpretation of
+the quality of an alignment we implemented several diagnostic plots that
+allow to access the aligned data visually. Furthermore, we demonstrate a
+complete workflow from chemical raw data to multivariate analyses with
+the popular and widely used
 \href{https://cran.r-project.org/web/packages/vegan/index.html}{\CRANpkg{vegan}}
 \citep{Oksanen.2016} package. This enables researches to make their work
 reproducible by others by an easy integration of all computational steps
@@ -115,13 +115,8 @@ horizontally.
 
 \begin{Schunk}
 \begin{Sinput}
-## load the package
+## Load the package
 library(GCalignR)
-\end{Sinput}
-\end{Schunk}
-
-\begin{Schunk}
-\begin{Sinput}
 ## Path to the dataset
 fpath <- system.file("extdata", "peak_data.txt", package = "GCalignR")
 \end{Sinput}
@@ -129,7 +124,7 @@ fpath <- system.file("extdata", "peak_data.txt", package = "GCalignR")
 
 \begin{Schunk}
 \begin{Sinput}
-# Open the file in an external editor
+## Open the file in an external editor
 file.show(fpath)
 \end{Sinput}
 \end{Schunk}
@@ -149,25 +144,25 @@ At first, all peaks within a chromatogram are shifted with respect to a
 reference chromatogram to account for systematic shifts in retention
 times among homologous chemicals shared by samples (figure
 \ref{figure:algorithm} A). This is done for all samples in relation to
-the reference sample such that the number shared peaks is maximised. The
-parameter \emph{max\_linear\_shift} defines the maximum temporal range
-of linear shifts that are considered by the program. \newline
+the reference sample such that the number of shared peaks is maximised.
+The parameter \emph{max\_linear\_shift} defines the maximum temporal
+range of linear shifts that are considered by the program. \newline
 Note: This method relies on the occurrence of substances that are shared
 among most substances to produce efficient adjustments. If those are
 absent, it is unlikely to find a suitable shift and chromatograms remain
-untransformed. \par
+untransformed after this step. \par
 A reference is selected automatically by searching for the sample with
 the highest average similarity to all other samples based on the number
 of shared peaks prior to alignment. Alternatively, a chromatogram can be
 included that contains peaks of an internal standard which peaks are
 \emph{a-priori} known to occur in all samples. In this case, the sample
-is named \texttt{reference} and will be removed after the alignment was
-conducted.
+may be named \texttt{reference} and will be removed after the alignment
+was conducted.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=13cm]{figures/algorithm}
-\caption{Overview of the algorithm performed by GCalignR. Rows of matrices correspond to substances, columns are samples. Zeros indicate absence of peaks and are therefore not considered in computations. \textbf{A}. Chromatograms are linearly shifted with respect to a reference (here S2). \textbf{B}. From left to right the first four steps from the input matrix to the final alignment are shown. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all samples in previous columns until the last column is reached. \textbf{C}. Coloured cells represent conflicting retention times that show a greater difference than specified. If merging does not result in the loss of any data, rows are merged. \textbf{D}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. \textbf{E}. Unique peaks present in a single individual are not of interest for similarity analyses and can be removed as well.}
+\includegraphics[width=13cm]{figures/algorithm_representation}
+\caption{Overview of the algorithm performed by GCalignR using. Rows of matrices correspond to substances, columns are samples. Zeros indicate absence of peaks and are therefore not considered in computations. \textbf{A}. Chromatograms are linearly shifted with respect to a reference (here S2). \textbf{B}. From left to right the first four steps from the input matrix to the final alignment are shown. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all samples in previous columns until the last column is reached. \textbf{C}. Coloured cells represent conflicting retention times of assembled rows that show a smaller difference than specified. If merging does not result in the loss of any data, rows are merged. \textbf{D}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. \textbf{E}. Unique peaks present in a single individual are not of interest for similarity analyses and can be removed as well.}
 \label{figure:algorithm}
 \end{figure}
 
@@ -345,11 +340,11 @@ plot(aligned_peak_data)
 \end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-7-1} 
+{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-6-1} 
 
 }
 
-\caption[Diagnostic plots summarise aligned datasets]{Diagnostic plots summarise aligned datasets}\label{fig:unnamed-chunk-7}
+\caption[Diagnostic plots summarise aligned datasets]{Diagnostic plots summarise aligned datasets}\label{fig:unnamed-chunk-6}
 \end{figure}
 \end{Schunk}
 
@@ -373,11 +368,11 @@ gc_heatmap(aligned_peak_data,type = "discrete",
 \end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-8-1} 
+{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-7-1} 
 
 }
 
-\caption[Heatmaps allow to inspect the distribution of substances across samples as well as the variability of their retention times]{Heatmaps allow to inspect the distribution of substances across samples as well as the variability of their retention times.}\label{fig:unnamed-chunk-8}
+\caption[Heatmaps allow to inspect the distribution of substances across samples as well as the variability of their retention times]{Heatmaps allow to inspect the distribution of substances across samples as well as the variability of their retention times.}\label{fig:unnamed-chunk-7}
 \end{figure}
 \end{Schunk}
 
@@ -468,14 +463,14 @@ ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
 
 \textbackslash{}begin\{figure\}
 
-\{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-12-1}
+\{\centering \includegraphics{ottensmann-stoffel-hoffman_files/figure-latex/unnamed-chunk-11-1}
 
 \}
 
 \textbackslash{}caption{[}A NMDS plot shows the similarity of
 individuals within colonies{]}\{A NMDS plot shows the similarity of
 individuals within colonies. Ellipses are drawn at the 95\% confidence
-level.\}\label{fig:unnamed-chunk-12} \textbackslash{}end\{figure\}
+level.\}\label{fig:unnamed-chunk-11} \textbackslash{}end\{figure\}
 \textbackslash{}end\{Schunk\}
 
 The ordination plot shows a clear pattern that separates individuals by

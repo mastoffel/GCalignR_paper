@@ -1,4 +1,5 @@
-# Determine optimal alignment paramters by minimising errors
+## Determine optimal alignment paramters by minimising errors
+## returns aligned data and a data frame listing the paramter combination
 optimal_params <- function(data,rt_col_name,conc_col_name,max_diff_peak2mean,min_diff_peak2peak) {
     library(GCalignR)
     out <- list()
