@@ -15,7 +15,7 @@ knitr::opts_chunk$set(cache = FALSE, fig.width = 7, fig.height = 7,tidy = TRUE,h
 options(width = 55)
 ```
 
-This document provides the code for the validation of alignments presented in our paper. Some parts a computational demanding and run for several hours on a standard computer. Therefore, we provide the final dataset along with this documentation.  
+This document provides all the code that was used for simulations on both, the fur seal data and the three bumblebee datasets. The simulations require many alignments using function `align_chromatograms` and are for this reason computational demanding. The execution of all steps runs for several hours on a standard computer.
 
 ## Prerequisites
 Most functions that are used in this analysis are part of our package `GCalignR`, while some more functions are provided in form of `R` scripts that are available along with this document in the subdirectory `R`. In order to run the code you need to have a subdirectory called `data` that contains the raw datafiles.
@@ -46,7 +46,7 @@ if (!("devtools" %in% rownames(installed.packages()))) {
 devtools::install_github("mastoffel/GCalignR")
 ```
 
-* Load packages and source custom function
+* Load packages and source custom function that are provided as a supplement
 ```{r,results='hide'}
 library(GCalignR)
 library(ggplot2)
@@ -71,7 +71,7 @@ expand.grid(peak2mean = max_diff_peak2mean,peak2peak = min_diff_peak2peak)
 
 * Run alignments with all combinations of both parameters
 
-```{r, eval = FALSE}
+```{r}
 ## B. flavifrons
 results_bfla <- optimal_params(data = "data/bfla.txt", rt_col_name = "RT", max_diff_peak2mean = seq(from = 0.01, to = 0.05,by = 0.01), min_diff_peak2peak = seq(from = 0.01, to = 0.2, by = 0.01))
 save(results_bfla,file = "data/results_bfla.RData")
@@ -186,23 +186,6 @@ knitr::include_graphics("figures/parameter_space.png")
 
 The exploration of the parameter space shows that the parameter `min_diff_peak2peak` has the greatest potential to change the error rate and thereby the accuracy of an alignment. Using small values allows a fine scalled grouping of retention times by penalising deviations strongly, but seems not appropriate for the three datasets. Allowing larger differences between unique peaks favours the correct assignment of more variable substances. 
 
-* Determining the best parameters
-
-The plot clearly indicates a large area in the parametric space that yields to similarly small errors and therefore demonstrates the robustness of `align_chromatograms`.  
-
-```{r,eval=TRUE}
-## combine estimates in a data frame
-df <- data.frame(p2p = errors_bbim[["p2p"]], 
-                 p2m = errors_bbim[["p2m"]],
-                 bbim = errors_bbim[["error"]],
-                 beph = errors_beph[["error"]],
-                 bfla = errors_bfla[["error"]])
-## calculate mean error rates
-df[["mean"]] <- apply(df[,3:5],1,mean)
-## 10 best parameter combinations
-head(df[order(df[["mean"]]),],n = 10)
-```
-
 ## Simulate the effect of additional noise
 The performance of GCalignR is clearly dependend on the quality of the raw data. To show the effect of noise (i.e. bad quality chromatograms) we used again the raw datasets of [@Dellicour.2013] and added small errors to a varying proportion of peaks and repeated the error calculation as shown above. This time we choose default values for `min__diff_peak2peak`and `max_diff_peak2mean`that were shown to be robust. 
 
@@ -225,7 +208,7 @@ load("data/bfla_zero.RData")
 
 * Convert to lists
 
-```{r,eval=FALSE}
+```{r}
 bfla_chroma <- lapply(bfla_zero[["input_list"]],na.remove) # remove NAs
 bbim_chroma <- lapply(bbim_zero[["input_list"]],na.remove) # remove NAs
 beph_chroma <- lapply(beph_zero[["input_list"]],na.remove) # remove NAs
@@ -235,12 +218,12 @@ beph_chroma <- lapply(beph_zero[["input_list"]],na.remove) # remove NAs
 
 * Dataset *Bombus flavifrons*
 
-```{r,results='hide',eval=FALSE}
+```{r,results='hide'}
 bfla_out <- sim_linear_shift(bfla_chroma,
                              rt_col_name = "RT",shifts = c(-0.03,0.03))
 bfla_shifted <- bfla_out[["Chromas"]] 
 
-p <- rep(seq(from = 0,to = 1,by = 0.05),each = 3)
+p <- rep(seq(from = 0,to = 1,by = 0.05),each = 8)
 bfla_data <- list()
 names <- character()
 for (i in 1:length(p)) { 
@@ -263,12 +246,12 @@ save(x = bfla_simulations,file = paste0("data/","bfla_simulations",".RData"))
 
 * Dataset *Bombus bimaculatus*
 
-```{r,results='hide',eval=FALSE}
+```{r,results='hide'}
 bbim_out <- sim_linear_shift(bbim_chroma,
                              rt_col_name = "RT",shifts = c(-0.03,0.03))
 bbim_shifted <- bbim_out[["Chromas"]] # linearly shifted sample
 
-p <- rep(seq(from = 0,to = 1,by = 0.05),each = 3)
+p <- rep(seq(from = 0,to = 1,by = 0.05),each = 8)
 bbim_data <- list()
 names <- character()
 for (i in 1:length(p)) { 
@@ -292,12 +275,12 @@ save(x = bbim_simulations,file = paste0("data/","bbim_simulations",".RData"))
 
 * Dataset *Bombus ephippiatus*
 
-```{r,results='hide',eval=FALSE}
+```{r,results='hide'}
 beph_out <- sim_linear_shift(beph_chroma,
                              rt_col_name = "RT",shifts = c(-0.03,0.03))
 beph_shifted <- beph_out[["Chromas"]] # linearly shifted sample
 
-p <- rep(seq(from = 0,to = 1,by = 0.05),each = 3)
+p <- rep(seq(from = 0,to = 1,by = 0.05),each = 8)
 beph_data <- list()
 names <- character()
 for (i in 1:length(p)) { 
@@ -318,7 +301,7 @@ save(x = beph_simulations,file = paste0("data/","beph_simulations",".RData"))
 ```
 
 * Estimate errors
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 load("data/bfla_simulations.RData")
 load("data/beph_simulations.RData")
 load("data/bbim_simulations.RData")
@@ -346,24 +329,40 @@ save(df,file = "data/df.RData")
 
 ```{r, message=FALSE}
 load("data/df.RData")
-plot <- ggplot2::ggplot(data = df,aes(x = noise, y = error, group = id, col = id)) + 
-    geom_smooth(level = 0.95) + 
-    theme_bw(base_size = 14) + 
-    theme(aspect.ratio = 1) +
+plot <- ggplot2::ggplot(data = df,aes(x = noise, y = error, group = id, col = id, fill = id)) + 
+    geom_smooth(level = 0.95, size = 1.5, alpha = 0.2) + 
+    theme_bw(base_size = 14, base_family = "sans") + 
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          aspect.ratio = 1,
+          legend.justification = c(0,0),
+          legend.position = c(0.7,0.02),
+          legend.background = element_rect(color = "black",fill = NA)) +
     xlab("Additional noise level") +
     ylab("Error rate") +
-    scale_x_continuous(breaks = seq(0,1,0.1)) +
-    scale_y_continuous(breaks = seq(0,0.3,0.02)) +
+    scale_x_continuous(breaks = seq(0,1,0.1), expand = c(0,0)) +
+    scale_y_continuous(breaks = seq(0,0.3,0.02), expand = c(0,0)) +
     scale_colour_manual(values = c("#1B9E77", "#D95F02", "#7570B3"),
-                        name = "",
+                        name = "Bumblebee datasets",
                         breaks = c("bbim", "beph", "bfla"),
                         labels = c("Bombus bimaculatus",
-                                 "B. ephippiatus",
-                                 "B. flavifrons"),
+                                   "B. ephippiatus",
+                                   "B. flavifrons"),
                         guide = guide_legend(
                             label.theme = element_text(
                                 face = "italic", angle = 0,
-                                size = 11)))
+                                size = 12))) +
+    
+    scale_fill_manual(values = c("#1B9E77", "#D95F02", "#7570B3"),
+                        name = "Bumblebee datasets",
+                        breaks = c("bbim", "beph", "bfla"),
+                        labels = c("Bombus bimaculatus",
+                                   "B. ephippiatus",
+                                   "B. flavifrons"),
+                        guide = guide_legend(
+                            label.theme = element_text(
+                                face = "italic", angle = 0,
+                                size = 12)))
 ```
 
 ```{r,echo=FALSE,results="hide",eval=FALSE,message=FALSE}
