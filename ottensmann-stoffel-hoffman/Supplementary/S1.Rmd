@@ -71,7 +71,7 @@ expand.grid(peak2mean = max_diff_peak2mean,peak2peak = min_diff_peak2peak)
 
 * Run alignments with all combinations of both parameters
 
-```{r}
+```{r,eval=FALSE}
 ## B. flavifrons
 results_bfla <- optimal_params(data = "data/bfla.txt", rt_col_name = "RT", max_diff_peak2mean = seq(from = 0.01, to = 0.05,by = 0.01), min_diff_peak2peak = seq(from = 0.01, to = 0.2, by = 0.01))
 save(results_bfla,file = "data/results_bfla.RData")
@@ -200,7 +200,7 @@ save(beph_zero,file = "data/beph_zero.RData")
 bfla_zero <- align_chromatograms(data = "data/bfla.txt",rt_col_name = "RT")
 save(bfla_zero,file = "data/bfla_zero.RData")
 ```
-```{r,eval=FALSE}
+```{r}
 load("data/bbim_zero.RData")
 load("data/beph_zero.RData")
 load("data/bfla_zero.RData")
@@ -218,7 +218,7 @@ beph_chroma <- lapply(beph_zero[["input_list"]],na.remove) # remove NAs
 
 * Dataset *Bombus flavifrons*
 
-```{r,results='hide'}
+```{r,results='hide',eval=FALSE}
 bfla_out <- sim_linear_shift(bfla_chroma,
                              rt_col_name = "RT",shifts = c(-0.03,0.03))
 bfla_shifted <- bfla_out[["Chromas"]] 
@@ -246,7 +246,7 @@ save(x = bfla_simulations,file = paste0("data/","bfla_simulations",".RData"))
 
 * Dataset *Bombus bimaculatus*
 
-```{r,results='hide'}
+```{r,results='hide',eval=FALSE}
 bbim_out <- sim_linear_shift(bbim_chroma,
                              rt_col_name = "RT",shifts = c(-0.03,0.03))
 bbim_shifted <- bbim_out[["Chromas"]] # linearly shifted sample
@@ -275,7 +275,7 @@ save(x = bbim_simulations,file = paste0("data/","bbim_simulations",".RData"))
 
 * Dataset *Bombus ephippiatus*
 
-```{r,results='hide'}
+```{r,results='hide',eval=FALSE}
 beph_out <- sim_linear_shift(beph_chroma,
                              rt_col_name = "RT",shifts = c(-0.03,0.03))
 beph_shifted <- beph_out[["Chromas"]] # linearly shifted sample
