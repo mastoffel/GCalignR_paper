@@ -54,7 +54,7 @@ Data is extracted from previously aligned data in order to create an datset that
 
 ## Simualation
 
-```{r}
+```{r,eval=FALSE}
 ## input data
 chromas <- aligned_peak_data[["input_list"]]
 

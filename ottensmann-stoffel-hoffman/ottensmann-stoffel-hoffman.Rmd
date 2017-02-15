@@ -113,7 +113,9 @@ Here, we demonstrate a typical workflow in `GCalignR` using the fur seal dataset
 
 ```{r}
 library(GCalignR) # loads the package 
-fpath <- system.file("extdata","peak_data.txt",package = "GCalignR") # path to peak_data.txt
+fpath <- system.file(dir = "extdata",
+                     file = "peak_data.txt",
+                     package = "GCalignR") # path to peak_data.txt
 check_input(fpath) # checks the data
 ```
 
@@ -179,14 +181,16 @@ scent <- norm_peaks(data = aligned_peak_data,
 The output of GCalignR is compatible with other functionalities in R, thereby providing a seamless transition between packages. For instance, multivariate analyses can be conduced using the package \pkg{vegan}. To visualise patterns of chemical similarity within the fur seal dataset in relation to breeding colony membership, we implemented non-metric-multidimensional scaling (NMDS) based on a Bray-Curtis dissimilarity matrix and visualised the outcome using \href{https://CRAN.R-project.org/package=ggplot2}{\CRANpkg{ggplot2}} \citep{Wickham.2009}.
 
 ```{r}
-scent <- scent[match(row.names(peak_factors),row.names(scent)),] # sort data 
+scent <- scent[match(row.names(peak_factors),
+                     row.names(scent)),] # sort data 
 scent <- log(scent + 1) # log + 1 transformation
 ```
 
 ```{r, results='hide'}
 scent_nmds <- vegan::metaMDS(comm = scent,distance = "bray") # NMDS
 scent_nmds <- as.data.frame(scent_nmds[["points"]]) # extract points
-scent_nmds <- cbind(scent_nmds,colony = peak_factors[["colony"]]) # add factors
+scent_nmds <- cbind(scent_nmds,
+                    colony = peak_factors[["colony"]]) # add factors
 ```
 
 ```{r, eval=FALSE}
@@ -199,7 +203,14 @@ ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
                        breaks=c("SSB", "FWB"),
                        labels=c("Special study beach", 
                                 "Freshwater beach")) +
-    theme(panel.background = element_rect(colour = "black", size = 1.5,fill = NA),aspect.ratio = 1,legend.justification=c(0,0), legend.position=c(0.01,0.01), legend.title = element_text(size=12, face="bold"),legend.background = element_rect(color = "black",fill = NA, size = 1, linetype = "solid")) 
+    theme(panel.background = element_rect(colour = "black",
+                                size = 1.5,fill = NA),
+          aspect.ratio = 1,legend.justification=c(0,0), 
+          legend.position=c(0.01,0.01),
+          legend.title = element_text(size=12, face="bold"),
+          legend.background = element_rect(color = "black",
+                                fill = NA, size = 1, 
+                                linetype = "solid")) 
 ```
 
 \begin{figure}[htbp]
