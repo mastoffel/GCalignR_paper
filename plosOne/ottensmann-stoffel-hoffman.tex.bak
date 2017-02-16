@@ -1,55 +1,11 @@
 % Template for PLoS
 % Version 3.4 January 2017
-% There are no restrictions on package use within the LaTeX files except that 
-% no packages listed in the template may be deleted.
-%
 % Please do not include colors or graphics in the text.
-%
-% The manuscript LaTeX source should be contained within a single file (do not use \input, \externaldocument, or similar commands).
-%
 % % % % % % % % % % % % % % % % % % % % % % %
 %
 % -- FIGURES AND TABLES
 %
 % Please include tables/figure captions directly after the paragraph where they are first cited in the text.
-%
-% DO NOT INCLUDE GRAPHICS IN YOUR MANUSCRIPT
-% - Figures should be uploaded separately from your manuscript file. 
-% - Figures generated using LaTeX should be extracted and removed from the PDF before submission. 
-% - Figures containing multiple panels/subfigures must be combined into one image file before submission.
-% For figure citations, please use "Fig" instead of "Figure".
-% See http://journals.plos.org/plosone/s/figures for PLOS figure guidelines.
-%
-% Tables should be cell-based and may not contain:
-% - spacing/line breaks within cells to alter layout or alignment
-% - do not nest tabular environments (no tabular environments within tabular environments)
-% - no graphics or colored text (cell background color/shading OK)
-% See http://journals.plos.org/plosone/s/tables for table guidelines.
-%
-% For tables that exceed the width of the text column, use the adjustwidth environment as illustrated in the example table in text below.
-%
-% % % % % % % % % % % % % % % % % % % % % % % %
-%
-% -- EQUATIONS, MATH SYMBOLS, SUBSCRIPTS, AND SUPERSCRIPTS
-%
-% IMPORTANT
-% Below are a few tips to help format your equations and other special characters according to our specifications. For more tips to help reduce the possibility of formatting errors during conversion, please see our LaTeX guidelines at http://journals.plos.org/plosone/s/latex
-%
-% For inline equations, please be sure to include all portions of an equation in the math environment.  For example, x$^2$ is incorrect; this should be formatted as $x^2$ (or $\mathrm{x}^2$ if the romanized font is desired).
-%
-% Do not include text that is not math in the math environment. For example, CO2 should be written as CO\textsubscript{2} instead of CO$_2$.
-%
-% Please add line breaks to long display equations when possible in order to fit size of the column. 
-%
-% For inline equations, please do not include punctuation (commas, etc) within the math environment unless this is part of the equation.
-%
-% When adding superscript or subscripts outside of brackets/braces, please group using {}.  For example, change "[U(D,E,\gamma)]^2" to "{[U(D,E,\gamma)]}^2". 
-%
-% Do not use \cal for caligraphic font.  Instead, use \mathcal{}
-%
-% % % % % % % % % % % % % % % % % % % % % % % % 
-%
-% Please contact latex@plos.org with any questions.
 %
 % % % % % % % % % % % % % % % % % % % % % % % %
 
@@ -176,28 +132,6 @@ Joseph I. Hoffman \textsuperscript{1},
 \\
 \bigskip
 
-% Insert additional author notes using the symbols described below. Insert symbol callouts after author names as necessary.
-% 
-% Remove or comment out the author notes below if they aren't used.
-%
-% Primary Equal Contribution Note
-%\Yinyang These authors contributed equally to this work.
-
-% Additional Equal Contribution Note
-% Also use this double-dagger symbol for special authorship notes, such as senior authorship.
-%\ddag These authors also contributed equally to this work.
-
-% Current address notes
-%\textcurrency Current Address: Dept/Program/Center, Institution Name, City, State, Country % change symbol to "\textcurrency a" if more than one current address note
-% \textcurrency b Insert second current address 
-% \textcurrency c Insert third current address
-
-% Deceased author note
-%\dag Deceased
-
-% Group/Consortium Author Note
-%\textpilcrow Membership list can be found in the Acknowledgments section.
-
 % Use the asterisk to denote corresponding authorship and provide email address in note below.
 * meinolf.ottensmann@web.de
 
@@ -211,26 +145,26 @@ Chemical signals are among the most fundamental and oldest means of animal commu
 \section*{Introduction}
 Chemical cues are arguably the most common mode of communication among animals~\cite{Wyatt.2014}. Patterns in complex chemical signatures can therefore yield information about phylogenetic relatedness~\cite{Meulemeester.2011}, sexual maturation~\cite{Caspers.2011}, kinship~\cite{Bonadonna.2012, Krause.2012, Stoffel.2015} and genetic quality~\cite{Charpentier.2010, Leclaire.2012, Stoffel.2015}. One of the most common approaches for resolving the chemical composition of samples is gas-chromatography (GC), which can rapidly detect and quantify molecules within a sample to generate a characteristic chromatogram or chemical profile~\cite{McNair.2011}. Although GC is relatively rapid and inexpensive, making it attractive for studies of non-model organisms, individual molecules are characterised according to their retention times, making them effectively anonymous.  An additional mass-spectrometry step (GC-MS) can provide further details of the chemical composition of individual molecules, allowing them to be compared to existing databases where available.\par
 GC provides a fast and effective means of resolving broad patterns of chemical similarity, but relies heavily on the correct alignment of homologous substances, represented by specific peaks, across samples.  However, peak alignment is not necessarily straightforward as it is necessary to account for perturbations in retention times caused by subtle, random and often unavoidable experimental variation including changes in ambient temperature, flow rate of the carrier gas and column ageing~\cite{Scott.2003, Pierce.2005}.  Variation in peak intensities both within and among samples can also contribute towards errors in characterising chemical profiles. \par
-GC is widely used in behavioural and ecological studies of (usually) non model organisms, such as birds, mammals and insects, where the goal is often to investigate broad chemical patterns.  These studies tend to use GC-MS less often than studies of humans and other model organisms, both because GC-MS is relatively expensive and because many of the chemicals that are resolved often reveal limited homology to currently available databases. However, aligning GC data is non-trivial due to the anonymous nature of the many peaks. Consequently, although a number of programs are available for aligning GC-MS data, which make use mass spectrograms, we are only aware of a single program that can handle GC data~\cite{Dellicour.2013}.  As a result, most studies of mammalian and avian chemical communication have relied on manual alignment and peak calling~\cite{Drea.2013}, which is time-consuming, particularly for large samples of individuals, can be biased and subjective, and is not strictly reproducible. \par
-Here, we introduce GCalignR, an R package that implements a simple algorithm to align peaks based on retention time data obtained by GC and provides sophisticated visualisations for the evaluation of alignment quality. First of all, the \texttt{check\_input} function is used to ensure that the data are formatted correctly (Fig~\ref{Fig:Fig1}, (1)). Second, the \texttt{align\_\_chromatograms} function is used to align the data (Fig~\ref{Fig:Fig1} (2)) as follows: (i) systematic shifts of chromatograms are corrected by applying appropriate linear shifts to whole chromatograms based on a single reference sample; (ii) retention times of individual peaks are grouped iteratively together with homologous peaks of other samples and aligned within the same row in a retention time matrix; and (iii) rows with similar retention times are merged where appropriate. Third, diagnostic plots allow the resulting alignments to be visually inspected (Fig~\ref{Fig:Fig1} (3)), thereby facilitating optional pre-processing or re-alignment of the data (Fig~\ref{Fig:Fig1} (4)). Finally, to compensate for differences in total chemical concentrations among samples, measures of peak abundance (e.g. peak area or peak height) can be normalised using the function \texttt{norm\_peaks} (Fig~\ref{Fig:Fig1} (5)). \par
+GC is widely used in behavioural and ecological studies of (usually) non model organisms, such as birds, mammals and insects, where the goal is often to investigate broad chemical patterns.  These studies tend to use GC-MS less often than studies of humans and other model organisms, both because GC-MS is relatively expensive and because many of the chemicals that are resolved often reveal limited homology to currently available databases. However, aligning GC data is non-trivial due to the anonymous nature of the many peaks. Consequently, although a number of programs are available for aligning GC-MS data, which make use of mass spectrograms, we are only aware of a single program that can handle GC data~\cite{Dellicour.2013}.  As a result, most studies of mammalian and avian chemical communication have relied on manual alignment and peak calling~\cite{Drea.2013}, which is time-consuming, particularly for large samples of individuals, can be biased and subjective, and is not strictly reproducible. \par
+Here, we introduce \texttt{GCalignR}, an R package that implements a simple algorithm to align peaks based on retention time data obtained by GC and provides sophisticated visualisations for the evaluation of alignment quality. First of all, the \texttt{check\_input} function is used to ensure that the data are formatted correctly (Fig~\ref{Fig:Fig1}, step 1). Second, the \texttt{align\_\_chromatograms} function is used to align the data (Fig~\ref{Fig:Fig1}, step 2) as follows: (i) systematic shifts of chromatograms are corrected by applying appropriate linear shifts to whole chromatograms based on a single reference sample; (ii) retention times of individual peaks are grouped iteratively together with homologous peaks of other samples and aligned within the same row in a retention time matrix; and (iii) rows with similar retention times are merged where appropriate. Third, diagnostic plots allow the resulting alignments to be visually inspected (Fig~\ref{Fig:Fig1}, step 3), thereby facilitating optional pre-processing or re-alignment of the data (Fig~\ref{Fig:Fig1}, step 4). Finally, to compensate for differences in total chemical concentrations among samples, measures of peak abundance (e.g. peak area or peak height) can be normalised using the function \texttt{norm\_peaks} (Fig~\ref{Fig:Fig1}, step 5). \par
 
 \begin{figure}[htbp]
 \centering
-\caption{\textbf{GCalignR workflow.}} 
-In addition to the alignment of substances across samples, the package provides functions for checking and inspecting the data. The aligned data are ready to use for analyses in conjunction with other packages. Each function is explained within the main text.
+\caption{\textbf{GCalignR workflow.}
+In addition to the alignment of substances across samples, the package provides functions for checking and inspecting the data. The aligned data are ready to use for analyses within other packages. Each function is explained within the main text.}
 \label{Fig:Fig1}
 \end{figure}
 
 Implementing GC alignment and checking within R brings several advantages over currently available stand-alone programs. First, the code is open source, which facilitates flexibility and transparency in data analysis. Second, all computational steps can be integrated into R Markdown documents~\cite{Allaire.2016}, thereby enhancing reproducibility. Finally, our package provides a seamless transition from the processing of the peak data through to downstream analysis within other widely used R packages for multivariate analysis, e.g.~\href{https://CRAN.R-project.org/package=vegan}{vegan}~\cite{Oksanen.2016}.
 
 \section*{The package}
-GCalignR contains functions to align peaks from GC and GC-MS data based on retention times and evaluate the resulting alignments. The main aim of the package is to provide a simple tool that guides the user through the alignment of large datasets prior to the statistical analysis of multivariate chemical data. A typical workflow for the analysis of chemical signatures in GCalignR is shown in Fig \ref{Fig:Fig1} and described below. The package vignette provides a detailed description of all of the functions and their arguments and can be accessed via \texttt{browseVignettes('GCalignR')} after the package has been installed. The workflow is described below and the standard input format of GCalignR is a tab-delimited text file, as illustrated in the vignette.
+GCalignR contains functions to align peaks from GC and GC-MS data based on retention times and evaluate the resulting alignments. The main aim of the package is to provide a simple tool that guides the user through the alignment of large datasets prior to the statistical analysis of multivariate chemical data. A typical workflow for the analysis of chemical signatures in GCalignR is shown in Fig \ref{Fig:Fig1} and described below. The package vignette provides a detailed description of all of the functions and their arguments and can be accessed via \texttt{browseVignettes("GCalignR")} after the package has been installed. The workflow is described below and the standard input format of GCalignR is a tab-delimited text file, as illustrated in the vignette.
 
 \section*{Example dataset}
 The functionality of GCalignR is illustrated using GC data from skin swabs of 41 Antarctic fur seal \textit{Arctocephalus gazella} mother-pup pairs from two neighbouring breeding colonies at South Georgia in the South Atlantic~\cite{Stoffel.2015}. The chemical data associated with these samples are provided in the file \texttt{peak\_data.txt}, which is distributed with the package. Additional data on colony membership and age-class are provided in the data frame \texttt{peak\_factors.RData}.
 
 \section*{Alignment of GC peaks among samples}
-As outlined briefly above, the core algorithm in \texttt{align\_chromatograms} (see Table~\ref{table:table1} for a list of parameters) implements three consecutive manipulations of the peak data (Fig~\ref{Fig:Fig1} i-iii) together with two further optional manipulations (Fig~\ref{Fig:Fig1} iv and v). These are described in detail below.
+As outlined briefly above, the core algorithm in \texttt{align\_chromatograms} (see Table~\ref{table:table1} for a list of parameters) implements three consecutive manipulations of the peak data (Fig~\ref{Fig:Fig2} i-iii) together with two further optional manipulations (Fig~\ref{Fig:Fig2} iv and v). These are described in detail below.
 
 \begin{table}[!ht]
 \begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
@@ -242,19 +176,19 @@ As outlined briefly above, the core algorithm in \texttt{align\_chromatograms} (
 \textbf{Paramter} & \textbf{Description} \\ \hline
 blanks & Character vector containing the names of negative control samples (blanks) that are used to identify and remove contaminants \\
 \hline
-data & Path to a tab-delimited text file list containing the chemical data. See the vignette for an example and alternative input formats \\
+data & Path to a tab-delimited text file containing the chemical data. See the vignette for an example and alternative input formats \\
 \hline
 delete\_single\_peak & Logical that implements the optional functionality to remove unique substances from the aligned dataset \\
 \hline
-max\_diff\_peak2mean & Numeric value defining the allowed deviation of the retention time of a focal peak from the mean of the corresponding row during peak alignment \\
+max\_diff\_peak2mean & Numeric value (in minutes) defining the allowed deviation of the retention time of a focal peak from the mean of the corresponding row during peak alignment \\
 \hline
 max\_linear\_shift & Numeric value (in minutes) that defines the range that is considered for the adjustment of linear shifts in peak retention times among samples \\
 \hline
-min\_diff\_peak2peak & Numeric values defining the expected minimum difference in retention times among substances. Rows that are more similar than the threshold value will be merged, if no conflict emerges due to the presence of peaks in more than one row within a single sample. \\
+min\_diff\_peak2peak & Numeric value (in minutes) defining the expected minimum difference in retention times among substances. Rows that are more similar than the threshold value will be merged, if no conflict emerges due to the presence of peaks in more than one row within a single sample. \\
 \hline
-rt\_cutoff\_low & Threshold value defining the minimum retention time in minutes. All peaks with retention times below the threshold value will be removed from the chemical dataset prior to alignment\\
+rt\_cutoff\_low & Threshold value defining the minimum retention time (in minutes). All peaks with retention times below the threshold value will be removed from the chemical dataset prior to alignment\\
 \hline
-rt\_cutoff\_high & Threshold value defining the maximum retention time in minutes. All peaks with retention times below the threshold value will be removed from the chemical dataset prior to alignment\\
+rt\_cutoff\_high & Threshold value defining the maximum retention time (in minutes). All peaks with retention times below the threshold value will be removed from the chemical dataset prior to alignment\\
 \hline
 rt\_col\_name & Name of the variable containing retention times of peaks. The name needs to correspond to a variable included in the chemical data \\
 \hline
@@ -269,12 +203,12 @@ write\_output & Character vector of variable names that correspond to variables 
 \end{table}
 
 \subsection*{(i) Linear adjustments of chromatograms}
-First, all peaks within a chromatogram are shifted with respect to a reference chromatogram to account for systematic shifts in retention times among homologous chemicals shared among samples (Fig~\ref{Fig:Fig2} i). This procedure is implemented for all of the samples in such a way that the number of shared peaks is maximised. The parameter max\_linear\_shift defines the maximum range of linear shifts that are considered by the function. This approach clearly relies on their being a sufficient number of substances shared among the samples. In the absence of shared substances, the function will be unlikely to find a suitable shift and consequently the chromatograms will remain untransformed. By default, a reference is selected automatically by searching for the sample with the highest average similarity to all other samples based on the number of shared peaks prior to alignment. Optionally, the alignment can be implemented using an internal standard (labelled 'reference') containing substances that are known \textit{a priori} to occur in most or all of the samples.
+First, all peaks within a chromatogram are shifted with respect to a reference chromatogram to account for systematic shifts in retention times among homologous chemicals shared among samples (Fig~\ref{Fig:Fig2} i). This procedure is implemented for all of the samples in such a way that the number of shared peaks is maximised. The parameter \texttt{max\_linear\_shift} defines the maximum range of linear shifts that are considered by the function. This approach clearly relies on their being a sufficient number of substances shared among the samples. In the absence of shared substances, the function will be unlikely to find a suitable shift and consequently the chromatograms will remain untransformed. By default, a reference is selected automatically by searching for the sample with the highest average similarity to all other samples based on the number of shared peaks prior to alignment. Optionally, the alignment can be implemented using an internal standard (labelled "reference") containing substances that are known \textit{a priori} to occur in most or all of the samples.
 
 \begin{figure}[htbp]
 \centering
 \caption{\textbf{Overview of the alignment algorithm implemented in GCalignR using a hypothetical dataset.}
-Within each matrix, rows correspond to substances and columns correspond to samples. Consecutive manipulations of the matrices are shown from left to right. Zeros indicate absence of peaks and are therefore not considered in computations. \textbf{i}. Chromatograms are linearly shifted with respect to a reference (here S2). Linear adjustments in this example are conducted based on two peaks coloured in blue and red. Colouring of cells in \textbf{ii-v} refer to the substance identity in the final alignment and black rectangles indicate conflicts that are solved by manipulations of the matrices. \textbf{ii}. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all of the samples in previous columns until the last column is reached. \textbf{iii}. If merging does not result in the loss of any data, rows are merged. \textbf{iv}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. \textbf{v}. Optionally, unique peaks present in a single sample can be removed as well.}
+Within each matrix, rows correspond to substances and columns correspond to samples. Consecutive manipulations of the matrices are shown from left to right. Zeros indicate absence of peaks and are therefore not considered in computations. \textbf{i}. Chromatograms are linearly shifted with respect to a reference (here S2). Colouring of cells refers to the substance identity in the final alignment and black rectangles indicate conflicts that are solved by manipulations of the matrices. \textbf{ii}. Peaks are aligned row by row. Initially, always the second sample is compared to the first. Then the next sample is compared to all of the samples in previous columns until the last column is reached. \textbf{iii}. If merging does not result in the loss of any data, rows are merged. \textbf{iv}. If specified, all peaks found in one or more blanks (negative controls) are removed as well as the blank itself. \textbf{v}. Optionally, unique peaks present in a single sample can be removed as well.}
 \label{Fig:Fig2}
 \end{figure}
 
@@ -286,7 +220,7 @@ Individual peaks are aligned across samples by comparing the peak retention time
 \mathrm{rt_m} > \left(\frac{\mathrm{\sum_{i=1}^{m-1}rt_{i}}}{\mathrm{m}-1}\right) + \mathrm{max\_diff\_peak2mean}
 \end{eqnarray}
 
-where rt = retention time; m = focal cell and max\_diff\_peak2mean defines the user-defined threshold deviation from the mean retention time.
+where rt = retention time; m = focal cell and max\_diff\_peak2mean defines the user-defined threshold deviation from the mean retention time (see Table 1).
 
 If the focal cell contains a retention time that is smaller than the mean retention time of all previous cells within the same row minus a user-defined threshold (Eq~\eqref{Eq:two}), all previous retention times are then moved to the next row.
 
@@ -307,7 +241,7 @@ After aligning peaks, the package offers several optional post-processing steps 
 Frequently, substances occur only within a single sample. For comparative approaches based on similarity matrices, these substances are often not informative and can be removed from the dataset. \texttt{align\_chromatograms} implements the removal of unique substances (Fig~\ref{Fig:Fig2} v) when the \texttt{delete\_single\_peak} argument is set to \texttt{TRUE}.
 
 \section*{Workflow}
-Here, we demonstrate a typical workflow in GCalignR using the fur seal dataset as an example. All of the alignment steps described above are implemented within the function align\_chromatograms. A list of user-defined parameters and their descriptions can be accessed from the documentation in the helpfile by typing \texttt{?align\_chromatograms}. Prior to peak alignment, the \texttt{check\_input} function interrogates the input file for typical formatting errors and missing data. We encourage the use of unique names for samples consisting only of letters, numbers and underscores. If the data fail to pass this quality test, indicative warnings will be returned to assist in error correction. As this function is executed internally prior to any alignment, the data need to pass this check before the alignment can begin.
+Here, we demonstrate a typical workflow in GCalignR using the fur seal dataset as an example. All of the alignment steps described above are implemented within the function \texttt{align\_chromatograms}. A list of user-defined parameters and their descriptions can be accessed from the documentation in the helpfile by typing \texttt{?align\_chromatograms}. Prior to peak alignment, the \texttt{check\_input} function interrogates the input file for typical formatting errors and missing data. We encourage the use of unique names for samples consisting only of letters, numbers and underscores. If the data fail to pass this quality test, indicative warnings will be returned to assist the user in error correction. As this function is executed internally prior to any alignment, the data need to pass this check before the alignment can begin.
 
 
 % code chunk 1
@@ -336,21 +270,22 @@ Afterwards, a summary of the alignment process can be retrieved using the printi
 
 % code chunk 3
 \begin{lstlisting}[language=R]
-print(aligned_peak_data) # Verbal summary of the alignment
+print(aligned_peak_data) # verbal summary of the alignment
 \end{lstlisting}
 
 As alignment quality may vary with the parameter values selected by the user, the plot function can be used to output four diagnostic plots.  These allow the user to explore how the parameter values affect the resulting alignment and can help flag issues with the raw data.
 
 % code chunk 4
 \begin{lstlisting}[language=R]
-plot(aligned_peak_data) # Creates Fig. 3
+plot(aligned_peak_data) # creates Fig. 3
 \end{lstlisting}
 
-Fig~\ref{Fig:Fig3} a shows the distribution of peak numbers across samples both before and after the alignment.  In this example dataset, we specified two negative controls (blanks): "C2" and "C3".  After the removal of substances shared with the controls as well as unique substances, the number of post-alignment peaks is significantly reduced across samples.  For details of the number of removed substances, type \texttt{print(aligned\_peak\_data)}. Fig~\ref{Fig:Fig3} b shows a histogram of linear shifts of entire samples implemented by the function \texttt{align\_chromatograms}. The majority of samples were not shifted at all, whereas a small number were shifted between -0.01 and 0.01 minutes. Fig~\ref{Fig:Fig3} c shows a histogram of the amount of variation among the samples in the retention times of single substances (defined as retention times that were aligned based on user-defined criteria). In this example, the distribution shows a left-skew, indicating that the majority of substances vary less than 0.05 minutes. Finally, Fig~\ref{Fig:Fig3} d shows the extent of sharing of substances across samples. This shows a typical pattern whereby most of the substances are found in a small number of samples but there a number of substances are also present in most of the samples.
+Fig~\ref{Fig:Fig3} a shows the distribution of peak numbers across samples both before and after the alignment.  In this example dataset, we specified two negative controls (blanks): "C2" and "C3".  After the removal of substances shared with the controls as well as unique substances, the number of post-alignment peaks is significantly reduced across all samples.  For details of the number of removed substances, type \texttt{print(aligned\_peak\_data)}. Fig~\ref{Fig:Fig3} b shows a histogram of linear shifts of entire samples implemented by the function \texttt{align\_chromatograms}. The majority of samples were not shifted at all, whereas a small number were shifted between -0.01 and 0.01 minutes. Fig~\ref{Fig:Fig3} c shows a histogram of the amount of variation among the samples in the retention times of single substances (defined as retention times that were aligned based on user-defined criteria). In this example, the distribution shows a left-skew, indicating that the majority of substances vary by less than 0.05 minutes. Finally, Fig~\ref{Fig:Fig3} d shows the extent of sharing of substances across samples. This reveals a typical pattern whereby most of the substances are found in a small number of samples but a number of substances are also present in most of the samples. \par	
 
 \begin{figure}[htbp]
 \centering
-\caption{\textbf{Diagnostic plots summarise aligned datasets.}}
+\caption{\textbf{Diagnostic plots summarising the aligned dataset.}
+\textbf{A} shows the number of peaks both prior to and after alignment; \textbf{B} shows a histogram of linear shifts across all samples; \textbf{C} shows the variation across samples in peak retention times defined by the difference between maximum and minimum retention time; and \textbf{D} shows a frequency distribution of substances shared across samples.}
 \label{Fig:Fig3}
 \end{figure} 
 
@@ -361,12 +296,12 @@ Additionally, the full alignment can be visualised using a heat map with the fun
 gc_heatmap(aligned_peak_data,type = "binary",threshold = 0.05)
 \end{lstlisting}
 
-The resulting heatmap for the example dataset (Fig~\ref{Fig:Fig4}) shows all of the post-alignment peaks across all samples and substances.  Filled cells represent peaks whereas empty cells indicate the absence of a given substance within a sample. Substances that deviate by less than a defined threshold value (in this case, 0.05 minutes) from the mean retention time across all samples are shown in light blue. Red cells indicate a deviation that is larger than 0.05 minutes and thereby flag potentially problematic alignments. For the example dataset, only a scattering of larger deviations are observed and these do not appear to be clustered within samples or substances.
+The resulting heatmap for the example dataset (Fig~\ref{Fig:Fig4}) shows all of the post-alignment peaks across all samples and substances.  Filled cells represent peaks whereas empty cells indicate the absence of a given substance within a sample. Substances that deviate by less than a user-defined threshold value (in this case, 0.05 minutes) from the mean retention time across all samples are shown in light blue. Red cells indicate a deviation that is larger than 0.05 minutes and thereby flag potentially problematic alignments. For the example dataset, only a scattering of larger deviations are observed and these do not appear to be clustered within samples or substances.
 
 \begin{figure}[htbp]
 \centering
-\caption{\textbf{Heatmaps allow to inspect the distribution of substances across samples.}}
-Heatmaps show the variability of the retention times. Substances on the horizontal axis are ordered by retention times, increasing from left to right. Parameters of the function are explained in the corresponding helpfile and the package vignette.
+\caption{\textbf{Heatmap of the final alignment highlighting potentially problematic alignments.} 
+Substances on the horizontal axis are ordered by retention times, increasing from left to right. Light blue cells indicate aligned peaks with retention times that deviate from the mean retention time of that substance by less than 0.05 minutes.  Red cells highlight aligned peaks with retention times that fall outside the threshold. Parameters of the function are explained in the corresponding helpfile and the package vignette.}
 \label{Fig:Fig4}
 \end{figure} 
 
@@ -382,15 +317,15 @@ scent <- norm_peaks(data = aligned_peak_data,
 \end{lstlisting}
 
 \subsubsection*{Downstream analyses}
-The output of GCalignR is compatible with other functionalities in R, thereby providing a seamless transition between packages. For instance, multivariate analyses can be conduced using the package vegan. To visualise patterns of chemical similarity within the fur seal dataset in relation to breeding colony membership, we implemented non-metric-multidimensional scaling (NMDS) based on a Bray-Curtis dissimilarity matrix in vegan:
+The output of GCalignR is compatible with other functionalities in R, thereby providing a seamless transition between packages. For instance, downstream multivariate analyses can be conducted using the package vegan~\cite{Oksanen.2016}. To visualise patterns of chemical similarity within the fur seal dataset in relation to breeding colony membership, we implemented non-metric-multidimensional scaling (NMDS) based on a Bray-Curtis dissimilarity matrix in vegan using the normalised and log-transformed chemical data:
 
 % code chunk 7 + 8
 \begin{lstlisting}[language=R]
-# sort data frame by row names
-scent <- scent[match(row.names(peak_factors),
-                     row.names(scent)),] # sort data 
-# Logarithmic transformation
+# log + 1 transformation
 scent <- log(scent + 1) 
+# sorting by row names
+scent <- scent[match(row.names(peak_factors),
+                     row.names(scent)),] 
 # NMDS
 scent_nmds <- vegan::metaMDS(comm = scent,distance = "bray") 
 scent_nmds <- as.data.frame(scent_nmds[["points"]]) 
@@ -402,7 +337,7 @@ The results of the NMDS are stored in the data frame \texttt{scent\_nmds} and ca
 
 % ggplot2 chunk
 \begin{lstlisting}[language=R]
-library(ggplot2) # load package ggplot2
+library(ggplot2) 
 ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
     geom_point(size = 2) + 
     theme_void() + 
@@ -421,28 +356,27 @@ ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
                                 linetype = "solid")) 
 \end{lstlisting}
 
-Fig \ref{Fig:Fig5} reveals a clear pattern in which seals from the two colonies cluster separately based on their chemical profiles, as shown also by Stoffel et al. (2015). Although a sufficient number of standards were lacking to calculate the internal error rate (as shown below for the bumblebee datasets), the strength of this pattern, together with the rarity of substances invoking large deviations from the mean retention time (Fig~\ref{Fig:Fig4}), suggests that the alignment implemented by GCalignR is of high quality.\par
+Fig \ref{Fig:Fig5} reveals a clear pattern in which seals from the two colonies cluster apart based on their chemical profiles, as shown also by Stoffel et al. (2015). Although a sufficient number of standards were lacking in this example to calculate the internal error rate (as shown below for the bumblebee datasets), the strength of this pattern, together with the rarity of substances invoking large deviations from the mean retention time (Fig~\ref{Fig:Fig4}), suggests that the alignment implemented by GCalignR is of high quality.\par
 
 \begin{figure}[htbp]
 \centering
 \caption{\textbf{A NMDS plot shows the similarity of individuals within colonies.}}
-Individuals are colour coded based on the breeding colony. 
+Individuals are colour coded based on the breeding colony. Blue and red points refer to the 'special study beach' and 'freshwater beach' respectively (see REF for details).
 \label{Fig:Fig5}
 \end{figure} 
 
-To explore this further, we introduced random errors into the raw dataset, re-aligned the resulting datasets, and then quantified the strength of clustering by colony using the function adonis from the package vegan, which performs a permutation-based multivariate analysis of variance (“permutational manova”~\cite{Anderson.2001}). The introduced errors followed a Gaussian profile with -0.02 to 0.02. For each error rate value, defined as the proportion of peaks within each sample with random errors, we generated 10 datasets.
-
 \subsection*{Validation based on error rates of known substances and  strength of effects}
-Introducing errors into the fur seal dataset affected both the total number of scored substances as well as the strength of the detected pattern (Fig~\ref{Fig:Fig6}). The total number of substances scored gradually increased with increasing error rate (Fig~\ref{Fig:Fig6} a) as higher variation in retention times caused peaks to be split into more than one substance.  In parallel, Adonis R2 values fell linearly up to an error rate of 0.5 before levelling off at around 0.07 (say something about significance, still highly significant!).  This suggests both that the original dataset is clearly structured and that the results of the alignment procedure within GCalignR are relatively robust to low to moderate (i.e. < 0.2) rates of peak calling error.
+
+We next explored the ability of the algorithm to cope with randomly introduced noise in the fur seal chemical dataset.  Errors were introduced at random into the raw dataset following a Gaussian profile with -0.02 to 0.02.  The resulting datasets were re-aligned and we then quantified the strength of clustering by colony using the function adonis from the package vegan, which performs a permutation-based multivariate analysis of variance (“permutational manova”~\cite{Anderson.2001}). For each error rate value, defined as the proportion of peaks within each sample with random errors, we generated 10 datasets.  The frequency of introduced errors affected both the total number of scored substances as well as the strength of the detected pattern (Fig~\ref{Fig:Fig6}). The total number of substances scored gradually increased with increasing error rate (Fig~\ref{Fig:Fig6} a) as higher variation in retention times caused peaks to be split into more than one substance.  In parallel, Adonis R2 values fell linearly up to an error rate of 0.5 before levelling off at around 0.07 (say something about significance, still highly significant!).  This suggests both that the original dataset is clearly structured and that the results of the alignment procedure within GCalignR are relatively robust to low to moderate (i.e. < 0.2) rates of peak calling error.
 
 \begin{figure}[htbp]
 \centering
-\caption{\textbf{Influence of additional noise on the detectability of patterns.}}
-Random errors following a Gaussian profile were added to the raw chemical dataset on the total number of scored substances. The strength of the colony effect was determined using the function adonis of the vegan package.
+\caption{\textbf{The influence of additional random noise on the detectability of patterns within the fur seal chemical dataset.}}
+Random errors following a Gaussian profile were introduced i.... Panel A shows, B shows... the raw chemical dataset on the total number of scored substances. The strength of the colony effect was determined using the function adonis of the vegan package.
 \label{Fig:Fig6}
 \end{figure} 
 
-To further assess the performance of GCalignR, we calculated alignment error rates based on three previously published bumblebee datasets comprising known substances identified using GC-MS~\cite{Dellicour.2013}. The first dataset comprises 24 \textit{Bombus bimaculatus} individuals characterised for 32 substances (total = 717 retention times).  The second comprises 20 \textit{B. ephippiatus} individuals characterised for 42 substances (total = 782 retention times) and the third comprises 11 \textit{B. flavifrons} individuals characterised for 44 substances (total = 457 retention times). We calculated the error rate as the ratio between incorrectly assigned retention times and the total number of retention times (Eq \eqref{Eq:one}).
+To further assess the performance of GCalignR, we calculated alignment error rates based on three previously published bumblebee datasets comprising known substances identified using GC-MS~\cite{Dellicour.2013}. The first dataset comprises 24 \textit{Bombus bimaculatus} individuals characterised for 32 substances (total = 717 retention times).  The second comprises 20 \textit{B. ephippiatus} individuals characterised for 42 substances (total = 782 retention times) and the third comprises 11 \textit{B. flavifrons} individuals characterised for 44 substances (total = 457 retention times). We calculated the error rate as the ratio of the number of incorrectly assigned retention times to the total number of retention times (Eq \eqref{Eq:three}).
 
 \begin{eqnarray}
 \label{Eq:three}
@@ -454,23 +388,22 @@ where N denotes the number of retention times defined as being misaligned (i.e. 
 \begin{figure}[htbp]
 \centering
 \caption{\textbf{Effects of alignment parameters on error rates}}
-The three datasets~\cite{Dellicour.2013} are comprised of known substances. Each point shows the error in aligning substances for a combination of \texttt{max\_diff\_peak2mean} and \texttt{min\_diff\_peak2peak.}
+Error rates were calculated for three bumblebee datasets (A-C)The three datasets~\cite{Dellicour.2013} based on known substances. Each point shows the aligment error rate for a given combination of \texttt{max\_diff\_peak2mean} and \texttt{min\_diff\_peak2peak.}
 \label{Fig:Fig7}
 \end{figure} 
 
-Additionally, we simulated the effect of noise by introducing errors at random into each of the datasets as described for the fur seal dataset above. As expected, error rates were initially low for all three species but increased with progressively increasing levels of noise (Fig~\ref{Fig:Fig8}).  \textit{B. bimaculatus} and \textit{B. flavifrons} both showed approximately linear responses whereas \textit{B. ephippiatus} began to level off when exceeding an additional noise level of around 0.7.  This probably reflects the fact that chemical diversity is lower in \textit{B. ephippiatus} (stats).
+Additionally, we simulated the effect of noise by introducing errors at random into each of the bumblebee datasets as described above for the fur seal dataset. As expected, error rates were initially low for all three species but increased with progressively increasing levels of noise (Fig~\ref{Fig:Fig8}).  \textit{B. bimaculatus} and \textit{B. flavifrons} both showed approximately linear responses whereas \textit{B. ephippiatus} appeared to level off when exceeding an additional noise level of around 0.7.
 
 \begin{figure}[htbp]
 \centering
-\caption{\textbf{Additional noise in peak retention times increases the error rate substantially.}}
-Therefore, optimal alignments require clearly resolved peaks that need to be extracted prior to using GCalignR.
+\caption{\textbf{The effect of introduced random noise on alignment error rates for three bumblebee datasets.}}
 \label{Fig:Fig8}
 \end{figure} 
 
 \section*{Final remarks}
-GcalignR is primarily intended as a pre-processing tool in the analysis of complex chemical signatures of animals where overall patterns of chemical similarity are of interest as opposed to specific (i.e. known) chemicals. We have therefore prioritised an objective and fast alignment procedure that is not claimed to be free of error.  However, error rate calculations suggest that the algorithm performs well, at least for most parameter combinations, while realistically low levels of noise appear to have a modest effect on the resulting alignments. Importantly, GCaligner also implements a suite of diagnostic plots that allow the user to visualise the influence of parameter settings on the resulting alignments, allowing fine-tuning of both the pre-processing and alignment steps (Fig~\ref{Fig:Fig1}).
+GcalignR is primarily intended as a pre-processing tool in the analysis of complex chemical signatures of organisms where overall patterns of chemical similarity are of interest as opposed to specific (i.e. known) chemicals. We have therefore prioritised an objective and fast alignment procedure that is not claimed to be free of error.  However, our error rate calculations suggest that the algorithm performs well, at least for most parameter combinations, while realistically low levels of noise appear to have a modest effect on the resulting alignments. Importantly, GCaligner also implements a suite of diagnostic plots that allow the user to visualise the influence of parameter settings on the resulting alignments, allowing fine-tuning of both the pre-processing and alignment steps (Fig~\ref{Fig:Fig1}).
 
-\subsection*{Availability}
+\section*{Availability}
 The current stable version requires at least R 3.2.5 and is available on CRAN.
 
 install.packages("GCalignR")
@@ -496,24 +429,123 @@ The raw fur seal chemical dataset is included in this R package and the bumblebe
 {\bf Files used to generate the results presented in this manuscript.} This is a compressed zip archive that includes all the data files that have been used to for the simulations presented in this manuscript along with the accompanying documentation written in Rmarkdown 
 
 \section*{Acknowledgments}
+We are grateful to Barbara Caspers and Sara Goleuke for helpful discussions during the development of the package. This work was funded by a Deutsche Forschungsgemeinschaft standard Grant HO 5122/3-1 (to J.I.H.).
 
 \nolinenumbers
-\bibliography{references}
 
-% Either type in your references using
-% \begin{thebibliography}{}
-% \bibitem{}
-% Text
-% \end{thebibliography}
-%
-% or
-%
-% Compile your BiBTeX database using our plos2015.bst
-% style file and paste the contents of your .bbl file
-% here. See http://journals.plos.org/plosone/s/latex for 
-% step-by-step instructions.
-% 
-%
+\begin{thebibliography}{10}
+
+\bibitem{Allaire.2016}
+Allaire JJ, Cheng J, Xie Y, McPherson J, Chang W, Allen J, et~al.. rmarkdown:
+  Dynamic Documents for R; 2016.
+\newblock Available from: \url{https://CRAN.R-project.org/package=rmarkdown}.
+
+\bibitem{Anderson.2001}
+Anderson MJ.
+\newblock A new method for non-parametric multivariate analysis of variance.
+\newblock Austral Ecology. 2001;26(1):32--46.
+\newblock doi:{10.1111/j.1442-9993.2001.01070.pp.x}.
+
+\bibitem{Bonadonna.2012}
+Bonadonna F, Sanz-Aguilar A.
+\newblock Kin recognition and inbreeding avoidance in wild birds: The first
+  evidence for individual kin-related odour recognition.
+\newblock Animal Behaviour. 2012;84(3):509--513.
+\newblock doi:{10.1016/j.anbehav.2012.06.014}.
+
+\bibitem{Caspers.2011}
+Caspers BA, Schroeder FC, Franke S, Voigt CC.
+\newblock Scents of adolescence: the maturation of the olfactory phenotype in a
+  free-ranging mammal.
+\newblock PloS one. 2011;6(6):e21162.
+
+\bibitem{Charpentier.2010}
+Charpentier MJE, Crawford JC, Boulet M, Drea CM.
+\newblock Message `scent': Lemurs detect the genetic relatedness and quality of
+  conspecifics via olfactory cues.
+\newblock Animal Behaviour. 2010;80(1):101--108.
+\newblock doi:{10.1016/j.anbehav.2010.04.005}.
+
+\bibitem{Dellicour.2013}
+Dellicour S, Lecocq T.
+\newblock GCALIGNER 1.0: an alignment program to compute a multiple sample
+  comparison data matrix from large eco-chemical datasets obtained by GC.
+\newblock Journal of separation science. 2013;36(19):3206--3209.
+\newblock doi:{10.1002/jssc.201300388}.
+
+\bibitem{Drea.2013}
+Drea CM, Boulet M, DELBARCO-TRILLO J, Greene LK, Sacha CR, Goodwin TE, et~al.
+\newblock The “secret” in secretions: methodological considerations in
+  deciphering primate olfactory communication.
+\newblock American journal of primatology. 2013;75(7):621--642.
+
+\bibitem{Krause.2012}
+Krause ET, Kr{\"u}ger O, Kohlmeier P, Caspers BA.
+\newblock Olfactory kin recognition in a songbird.
+\newblock Biology letters. 2012;8(3):327--329.
+
+\bibitem{Leclaire.2012}
+Leclaire S, Merkling T, Raynaud C, Mulard H, Bessi{\`e}re JM, Lhuillier {\'E},
+  et~al.
+\newblock Semiochemical compounds of preen secretion reflect genetic make-up in
+  a seabird species.
+\newblock Proceedings of the Royal Society of London B: Biological Sciences.
+  2012;279(1731):1185--1193.
+
+\bibitem{McNair.2011}
+McNair HM, Miller JM.
+\newblock Basic gas chromatography.
+\newblock {John Wiley {\&} Sons}; 2011.
+
+\bibitem{Meulemeester.2011}
+de~Meulemeester T, Gerbaux P, Boulvin M, Copp{\'e}e A, Rasmont P.
+\newblock A simplified protocol for bumble bee species identification by
+  cephalic secretion analysis.
+\newblock Insectes Sociaux. 2011;58(2):227--236.
+\newblock doi:{10.1007/s00040-011-0146-1}.
+
+\bibitem{Oksanen.2016}
+Oksanen J, Blanchet FG, Friendly M, Kindt R, Legendre P, McGlinn D, et~al..
+  vegan: Community Ecology Package; 2016.
+\newblock Available from: \url{https://CRAN.R-project.org/package=vegan}.
+
+\bibitem{Pierce.2005}
+Pierce KM, Hope JL, Johnson KJ, Wright BW, Synovec RE.
+\newblock Classification of gasoline data obtained by gas chromatography using
+  a piecewise alignment algorithm combined with feature selection and principal
+  component analysis.
+\newblock Journal of Chromatography A. 2005;1096(1):101--110.
+
+\bibitem{Scott.2003}
+Scott RP.
+\newblock Principles and practice of chromatography.
+\newblock Chrom-Ed Book Series. 2003;1.
+
+\bibitem{Stoffel.2015}
+Stoffel MA, Caspers BA, Forcada J, Giannakara A, Baier M, Eberhart-Phillips L,
+  et~al.
+\newblock Chemical fingerprints encode mother--offspring similarity, colony
+  membership, relatedness, and genetic quality in fur seals.
+\newblock Proceedings of the National Academy of Sciences.
+  2015;112(36):E5005--E5012.
+
+\bibitem{Wickham.2009}
+Wickham H.
+\newblock ggplot2: Elegant Graphics for Data Analysis.
+\newblock Springer-Verlag New York; 2009.
+\newblock Available from: \url{http://ggplot2.org}.
+
+
+\bibitem{Wickham.2016}
+Wickham H, Chang W. devtools: Tools to Make Developing R Packages Easier; 2016.
+\newblock Available from: \url{https://CRAN.R-project.org/package=devtools}.
+
+\bibitem{Wyatt.2014}
+Wyatt TD.
+\newblock Pheromones and animal behavior: chemical signals and signatures.
+\newblock {Cambridge University Press}; 2014.
+
+\end{thebibliography}
 
 
 \end{document}

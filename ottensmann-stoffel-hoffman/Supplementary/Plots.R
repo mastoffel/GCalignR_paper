@@ -15,10 +15,10 @@ ggplot2::ggsave(a,filename = "ottensmann-stoffel-hoffman/figures/ordiplot.png",w
 ## Heatmap
 library(ggplot2)
 library(GCalignR)
-a <- gc_heatmap(aligned_peak_data,type = "binary",threshold = 0.05)
-a + theme(plot.background = element_rect(fill = "white"))
+a <- gc_heatmap(aligned_peak_data,type = "binary",threshold = 0.05,main_title = "")
+a <- a + theme(plot.background = element_rect(fill = "white"))
 
-ggplot2::ggsave(a,filename = "ottensmann-stoffel-hoffman/figures/heatmap.png",width = 5,height = 5,units = "in",dpi = 300)
+ggplot2::ggsave(a,filename = "ottensmann-stoffel-hoffman/figures/heatmap.tiff",width = 6,height = 5,units = "in",dpi = 300)
 
 ## diagnostic plots
 library(GCalignR)
