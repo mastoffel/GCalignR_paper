@@ -195,13 +195,11 @@ scent_nmds <- cbind(scent_nmds,
 
 ```{r, eval=FALSE}
 ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
-    geom_point(size = 2) + 
+    geom_point() + 
     theme_void() + 
     scale_color_manual(values = c("blue","red")) +
-    theme(panel.background = element_rect(colour = "black",
-            size = 1.5,fill = NA),
-            aspect.ratio = 1,
-          legend.position = "none") 
+    theme(panel.background = element_rect(colour = "black", size = 1.25,
+            fill = NA), aspect.ratio = 1, legend.position = "none")
 ```
 
 \begin{figure}[htbp]

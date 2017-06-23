@@ -270,7 +270,9 @@ alignment can begin.
 \begin{Schunk}
 \begin{Sinput}
 library(GCalignR) # loads the package 
-fpath <- system.file("extdata","peak_data.txt",package = "GCalignR") # path to peak_data.txt
+fpath <- system.file(dir = "extdata",
+                     file = "peak_data.txt",
+                     package = "GCalignR") # path to peak_data.txt
 check_input(fpath) # checks the data
 \end{Sinput}
 \begin{Soutput}
@@ -429,7 +431,8 @@ dissimilarity matrix and visualised the outcome using
 
 \begin{Schunk}
 \begin{Sinput}
-scent <- scent[match(row.names(peak_factors),row.names(scent)),] # sort data 
+scent <- scent[match(row.names(peak_factors),
+                     row.names(scent)),] # sort data 
 scent <- log(scent + 1) # log + 1 transformation
 \end{Sinput}
 \end{Schunk}
@@ -438,22 +441,19 @@ scent <- log(scent + 1) # log + 1 transformation
 \begin{Sinput}
 scent_nmds <- vegan::metaMDS(comm = scent,distance = "bray") # NMDS
 scent_nmds <- as.data.frame(scent_nmds[["points"]]) # extract points
-scent_nmds <- cbind(scent_nmds,colony = peak_factors[["colony"]]) # add factors
+scent_nmds <- cbind(scent_nmds,
+                    colony = peak_factors[["colony"]]) # add factors
 \end{Sinput}
 \end{Schunk}
 
 \begin{Schunk}
 \begin{Sinput}
-library(ggplot2) # load package ggplot2
 ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
-    geom_point(size = 2) + 
+    geom_point() + 
     theme_void() + 
-    scale_color_manual(values = c("blue","red"), 
-                       name="Breeding colony",
-                       breaks=c("SSB", "FWB"),
-                       labels=c("Special study beach", 
-                                "Freshwater beach")) +
-    theme(panel.background = element_rect(colour = "black", size = 1.5,fill = NA),aspect.ratio = 1,legend.justification=c(0,0), legend.position=c(0.01,0.01), legend.title = element_text(size=12, face="bold"),legend.background = element_rect(color = "black",fill = NA, size = 1, linetype = "solid")) 
+    scale_color_manual(values = c("blue","red")) +
+    theme(panel.background = element_rect(colour = "black", size = 1.25,
+            fill = NA), aspect.ratio = 1, legend.position = "none")
 \end{Sinput}
 \end{Schunk}
 

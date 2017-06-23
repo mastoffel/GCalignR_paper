@@ -1,15 +1,12 @@
 ## Ordiplot
 library(ggplot2)
 a <- ggplot(data = scent_nmds,aes(MDS1,MDS2,color = colony)) +
-    geom_point(size = 2) + 
+    geom_point() + 
     theme_void() + 
-    scale_color_manual(values = c("blue","red"), 
-                      name="Breeding colony",
-                      breaks=c("SSB", "FWB"),
-                      labels=c("Special study beach", 
-                               "Freshwater beach")) +
-    theme(panel.background = element_rect(colour = "black", size = 1.25,fill = NA),aspect.ratio = 1,legend.justification=c(0,0), legend.position=c(0.01,0.01), legend.title = element_text(size=12, face="bold"),legend.background = element_rect(color = "black",fill = NA, size = 1, linetype = "solid")) 
-
+    scale_color_manual(values = c("blue","red")) +
+    theme(panel.background = element_rect(colour = "black", size = 1.25,
+            fill = NA), aspect.ratio = 1, legend.position = "none") 
+a
 ggplot2::ggsave(a,filename = "ottensmann-stoffel-hoffman/figures/ordiplot.png",width = 5,height = 5,units = "in",dpi = 300)
 
 ## Heatmap
