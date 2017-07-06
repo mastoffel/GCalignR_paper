@@ -47,6 +47,9 @@
 % MO, including R-code
 \usepackage{listings}
 
+% MO, including mutiple references
+\usepackage{cleveref}
+
 % create "+" rule type for thick vertical lines
 \newcolumntype{+}{!{\vrule width 2pt}}
 
@@ -125,11 +128,14 @@
 % Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
 \\
 Meinolf Ottensmann \textsuperscript{1,\added{\Yinyang},*},
-Martin A. Stoffel \textsuperscript{1,\added{\Yinyang}},
+Martin A. Stoffel \textsuperscript{1,2,\added{\Yinyang}},
+Hazel Nichols \textsuperscript{2},
 Joseph I. Hoffman \textsuperscript{1}
 \\
 \bigskip
 \textbf{1} Department of Animal Behaviour, Bielefeld University, Bielefeld
+
+\textbf{2} School of Natural Sciences and Psychology, Faculty of Science, John Moores University, Liverpool
 \\
 \bigskip
 
@@ -147,11 +153,11 @@ Chemical signals are arguably the oldest and most fundamental means of animal co
 
 % Use "Eq" instead of "Equation" for equation citations.
 \section*{Introduction}
-Chemical cues are arguably the most common mode of communication among animals~\cite{Wyatt.2014}. Patterns in complex chemical signatures can therefore yield information about phylogenetic relatedness~\cite{Meulemeester.2011}, sexual maturation~\cite{Caspers.2011}, kinship~\cite{Bonadonna.2012, Krause.2012, Stoffel.2015} and genetic quality~\cite{Charpentier.2010, Leclaire.2012, Stoffel.2015}. One of the most common approaches for resolving the chemical composition of samples is \replaced{Gas Chromatography}{gas-chromatography} \added{coupled to a flame ionization detector} (\replaced{GC-FID}{GC}) \added{. This analytical technique vaporises a chemical sample and retards its components differentially based on chemical properties while passing a gas through a tube-like column. Thereby, components are separated over time before they are ionised by a flame and detected as a electrical current. This allows to } \deleted{, which can} rapidly detect and quantify molecules within a sample to generate a characteristic \added{one-dimensional} chromatogram or chemical profile~\cite{McNair.2011}. 
-Although \replaced{GC-FID}{GC} is relatively rapid and inexpensive, making it attractive for studies of non-model organisms, individual molecules are characterised according to their retention times \added{alone}, making them effectively anonymous.  \added{An alternative and often used method is Gas Chromatography- Mass spectrometry (GC-MS). Here, a two dimensional spectrum is created for every component, providing} \deleted{An additional mass-spectrometry step (GC-MS) can provide} further details of the chemical composition of individual molecules \added{. This information can be used to reveal the identity of a component by comparison} \deleted{, allowing them to be compared} to existing databases where available.\par
-\replaced{GC-FID}{GC} provides a fast and effective means of resolving broad patterns of chemical similarity, but relies heavily on the correct alignment of homologous substances, represented by specific peaks, across samples. However, peak alignment is not necessarily straightforward as it is necessary to account for perturbations in retention times caused by subtle, random and often unavoidable experimental variation including changes in ambient temperature, flow rate of the carrier gas and column ageing~\cite{Scott.2003, Pierce.2005}.  Variation in peak intensities both within and among samples can also contribute towards errors in characterising chemical profiles. \par
-\replaced{GC-FID}{GC} is widely used in behavioural and ecological studies of (usually) non model organisms, such as birds, mammals and insects, where the goal is often to investigate broad chemical patterns. These studies tend to use GC-MS less often than studies of humans and other model organisms, both because GC-MS is relatively expensive and because many of the chemicals that are resolved often reveal limited homology to currently available databases. However, aligning \replaced{GC-FID}{GC} data is non-trivial due to the \replaced{unknown}{anonymous} nature of the many peaks. Consequently, although a number of programs are available for aligning GC-MS data, which make use of \added{characteristic patterns in} mass spectrograms, we are only aware of a single program that can handle \replaced{GC-FID}{GC} data~\cite{Dellicour.2013}.  As a result, most studies of mammalian and avian chemical communication have relied on manual alignment and peak calling~\cite{Drea.2013}, which is time-consuming, particularly for large samples of individuals, can be biased and subjective, and is not strictly reproducible. \par
-Here, we introduce \texttt{GCalignR}, an R package that implements a simple algorithm to align peaks based on retention time data obtained by \replaced{GC-FID}{GC} and provides sophisticated visualisations for the evaluation of alignment quality. First of all, the \texttt{check\_input} function is used to ensure that the data are formatted correctly (Fig~\ref{Fig:Fig1}, step 1). Second, the \texttt{align\_\_chromatograms} function is used to align the data (Fig~\ref{Fig:Fig1}, step 2) as follows: (i) systematic shifts of chromatograms are corrected by applying appropriate linear shifts to whole chromatograms based on a single reference sample; (ii) retention times of individual peaks are grouped iteratively together with homologous peaks of other samples and aligned within the same row in a retention time matrix; and (iii) rows with similar retention times are merged where appropriate. Third, diagnostic plots allow the resulting alignments to be visually inspected (Fig~\ref{Fig:Fig1}, step 3), thereby facilitating optional pre-processing or re-alignment of the data (Fig~\ref{Fig:Fig1}, step 4). Finally, to compensate for differences in total chemical concentrations among samples, measures of peak abundance (e.g. peak area or peak height) can be normalised using the function \texttt{norm\_peaks} (Fig~\ref{Fig:Fig1}, step 5). \par
+Chemical cues are arguably the most common mode of communication among animals~\cite{Wyatt.2014}. Patterns in complex chemical signatures can therefore yield information about phylogenetic relatedness~\cite{Meulemeester.2011}, sexual maturation~\cite{Caspers.2011}, kinship~\cite{Bonadonna.2012, Krause.2012, Stoffel.2015} and genetic quality~\cite{Charpentier.2010, Leclaire.2012, Stoffel.2015}. One of the most common approaches for resolving the chemical composition of samples is \replaced{Gas Chromatography}{gas-chromatography} \added{coupled to a flame ionization detector} (\replaced{GC-FID}{GC}) \added{. This analytical technique vaporises a chemical sample and retards its components differentially based on chemical properties while passing a gas through a tube-like column. Thereby, components are separated over time before they are ionised by a flame and detected as an electrical current. This allows to} \deleted{, which can} rapidly detect and quantify molecules within a sample to generate a characteristic \added{one-dimensional} chromatogram or chemical profile~\cite{McNair.2011}. 
+Although \replaced{GC-FID}{GC} is relatively rapid and inexpensive, making it attractive for studies of non-model organisms, individual molecules are characterised according to their retention times \added{alone}, making them effectively anonymous. \added{An alternative and often used method is Gas Chromatography- Mass spectrometry (GC-MS). Here, a two dimensional spectrum is created for every component, providing} \deleted{An additional mass-spectrometry step (GC-MS) can provide} further details of the chemical composition of individual molecules \added{. This information can be used to reveal the identity of a component by comparison} \deleted{, allowing them to be compared} to existing databases where available.\par
+\replaced{In contrast, GC-FID}{GC} provides a fast and effective means of resolving broad patterns of chemical similarity \added{by quantifying substances with high sensitivity}, but relies heavily on the correct alignment of homologous substances, represented by specific peaks, across samples. However, peak alignment is not necessarily straightforward as it is necessary to account for perturbations in retention times caused by subtle, random and often unavoidable experimental variation including changes in ambient temperature, flow rate of the carrier gas and column ageing~\cite{Scott.2003, Pierce.2005}.  Variation in peak intensities both within and among samples can also contribute towards errors in characterising chemical profiles. \par
+\replaced{GC-FID}{GC} is widely used in behavioural and ecological studies of (usually) non model organisms, such as birds, mammals and insects, where the goal is often to investigate broad chemical patterns. These studies tend to use GC-MS less often than studies of humans and other model organisms, both because GC-MS is relatively expensive and because many of the chemicals that are resolved often reveal limited homology to currently available databases. However, aligning \replaced{GC-FID}{GC} data is non-trivial due to the \replaced{unknown}{anonymous} nature of the many peaks. Consequently, although a number of programs are available for aligning GC-MS data, which make use of \added{characteristic patterns in} mass spectrograms, we are only aware of a single program that \replaced{was proposed to align GC-FID}{ can handle GC} data~\cite{Dellicour.2013}.  As a result, most studies of mammalian and avian chemical communication have relied on manual alignment and peak calling~\cite{Drea.2013}, which is time-consuming, particularly for large samples of individuals, can be biased and subjective, and is not strictly reproducible. \par
+Here, we introduce \texttt{GCalignR}, an R package that implements a simple algorithm to align peaks based on retention time data obtained by \replaced{GC-FID}{GC} and provides sophisticated visualisations for the \added{fine-tuning of alignment parameters to the} evaluation of alignment quality. \deleted{First of all, the \texttt{check\_input} function is used to ensure that the data are formatted correctly (Fig~\ref{Fig:Fig1}, step 1). Second, the \texttt{align\_chromatograms} function is used to align the data (Fig~\ref{Fig:Fig1}, step 2) as follows: (i) systematic shifts of chromatograms are corrected by applying appropriate linear shifts to whole chromatograms based on a single reference sample; (ii) retention times of individual peaks are grouped iteratively together with homologous peaks of other samples and aligned within the same row in a retention time matrix; and (iii) rows with similar retention times are merged where appropriate. Third, diagnostic plots allow the resulting alignments to be visually inspected (Fig~\ref{Fig:Fig1}, step 3), thereby facilitating optional pre-processing or re-alignment of the data (Fig~\ref{Fig:Fig1}, step 4). Finally, to compensate for differences in total chemical concentrations among samples, measures of peak abundance (e.g. peak area or peak height) can be normalised using the function \texttt{norm\_peaks} (Fig~\ref{Fig:Fig1}, step 5).} \par
 
 \begin{figure}[htbp]
 \centering
@@ -160,10 +166,30 @@ In addition to the alignment of substances across samples, the GCalignR package 
 \label{Fig:Fig1}
 \end{figure}
 
-Implementing \replaced{GC-FID}{GC} alignment and checking within R brings several advantages over currently available stand-alone programs. First, the code is open source, which facilitates flexibility and transparency in data analysis. Second, all computational steps can be integrated into R Markdown documents~\cite{Allaire.2016}, thereby enhancing reproducibility. Finally, our package provides a seamless transition from the processing of the peak data through to downstream analysis within other widely used R packages for multivariate analysis, e.g.~\href{https://CRAN.R-project.org/package=vegan}{vegan}~\cite{Oksanen.2016}.
+Implementing \replaced{GC-FID}{GC} alignment and checking within R brings several advantages over currently available stand-alone programs. First, the code is open source, which facilitates flexibility and transparency in data analysis. Second, all computational steps can be integrated into R Markdown documents~\cite{Allaire.2016}, thereby enhancing reproducibility. Finally, our package provides a seamless transition from the processing of the peak data through to downstream analysis within other widely used R packages for multivariate analysis, e.g.~\href{https://CRAN.R-project.org/package=vegan}{vegan}~\cite{Oksanen.2016}. \added{We propose simple alignment procedures that are based on a combination of three parameters that allow the customisation of peaks alignments for a given dataset. The performance of the algorithms is evaluated on the basis of a previously published dataset that provides additional information based on analysing the same samples with two-dimensional GC-MS and an additional perturbation experiment, in which we introduce random noise into the dataset. Thereby, we can show that our method performs well over a wide range of parameter combinations and is generally insensitive to noise.} 
+
+\added{\section*{Methods}}
+We developed an alignment procedure that is split into three simple algorithms that are consecutively executed to align peaks belonging to different samples. All steps work on a peak list. Such a list can be generated for every chromatogram, defined as the output of a Chromatograph (e.g. \textbf{G}as \textbf{C}hromatography \textbf{F}lame \textbf{I}onization \textbf{D}etector, GC-FID) that plots the measured electric current over the time course of a separation run. Vendors (e.g. Thermo Fisher Scientific, Agilent Technologies and Shimadzu) offer software that allows to detect and integrate peaks (i.e. compounds) in the signal using standard procedures~\cite{Grob.2004, McNair.2011} and provide automatized tools to export the peaks in form of a matrix that contains data for every detected peak in sample. \par
+In GCalignR, we make use of a peak list that combines matrices into a single file, consisting of two rows that give the sample identifiers and column names of individual peak matrices respectively, followed by peak matrices concatenated column-wise~\href{Fig:Fig1B}. This format is a simplification of the output returned by vendors software and can be easily assembled using standard spreadsheet application.
+
+\begin{figure}[htbp]
+\centering
+\caption{\textbf{From chromatograms to a peak list.}
+After peaks are integrated for each sample (filled area), retention times and quantification measures like the peak height can be extracted and written to a peak list (insert in the lower panel) that contains sample identifiers ('Sample\_A' and 'Sample\_B'), variable names ('retention\_time' and 'peak\_height') and the respective matrices for each of the samples.} 
+\label{Fig:Fig1B}
+\end{figure}
+
+First, all peaks within a chromatogram are shifted with respect to a reference chromatogram to account for systematic shifts in retention times among homologous chemicals shared among samples (Fig~\ref{Fig:Fig2} i). This procedure is implemented for all of the samples in such a way that the number of shared peaks is maximised. The parameter \texttt{max\_linear\_shift} defines the maximum range of linear shifts that are considered by the function. This approach clearly relies on their being a sufficient number of substances shared among the samples. In the absence of shared substances, the function will be unlikely to find a suitable shift and consequently the chromatograms will remain untransformed. By default, a reference is selected automatically by searching for the sample with the highest average similarity to all other samples based on the number of shared peaks prior to alignment. Optionally, the alignment can be implemented using an internal standard (labelled "reference") containing substances that are known \textit{a priori} to occur in most or all of the samples.
+
+\subsection*{(i) Linear adjustments of chromatograms}
+
+
+
+
+
 
 \section*{The package}
-GCalignR contains functions to align peaks from \replaced{GC-FID}{GC} \deleted{and GC-MS} data based on retention times and evaluate the resulting alignments. The main aim of the package is to provide a simple tool that guides the user through the alignment of large datasets prior to the statistical analysis of multivariate chemical data. \added{GCalignR uses peak lists that can be automatically created with third-party software (e.g. XCalibur, Thermo fisher scientific).} A typical workflow for the analysis of chemical signatures in GCalignR is shown in Fig \ref{Fig:Fig1} and described below. The package vignette provides a detailed description of all of the functions and their arguments and can be accessed via \texttt{browseVignettes("GCalignR")} after the package has been installed. The workflow is described below and the standard input format of GCalignR is a tab-delimited text file, as illustrated in the vignette.
+GCalignR contains functions to align peaks from \replaced{GC-FID}{GC} \deleted{and GC-MS} data based on retention times and evaluate the resulting alignments. The main aim of the package is to provide a simple tool that guides the user through the alignment of large datasets prior to the statistical analysis of multivariate chemical data. \added{GCalignR uses peak lists that can be automatically created with vendor software (e.g. XCalibur, Thermo fisher scientific).} A typical workflow for the analysis of chemical signatures in GCalignR is shown in Fig \ref{Fig:Fig1} and described below. The package vignette provides a detailed description of all of the functions and their arguments and can be accessed via \texttt{browseVignettes("GCalignR")} after the package has been installed. The workflow is described below and the standard input format of GCalignR is a tab-delimited text file, as illustrated in the vignette.
 
 \section*{\replaced{Supported data}{Example dataset}}
 \added{GCalignR was developed to for data generated with GC-FID. This technique combines the separation of chemicals within a sample by Gas Chromatography with the detection and quantification of peaks using a Flame Ionization detector. Thereby, a list of peaks detected in a chromatogram can be generated for each sample using proprietary software (e.g. XCalibur, Thermo Fisher Scientific;  ChemStation, Agilent Technologies} or freeware (e.g.).
@@ -211,9 +237,9 @@ write\_output & Character vector of variable names that correspond to variables 
 \end{adjustwidth}
 \end{table}
 
-\subsection*{(i) Linear adjustments of chromatograms}
+\deleted{\subsection*{(i) Linear adjustments of chromatograms}
 First, all peaks within a chromatogram are shifted with respect to a reference chromatogram to account for systematic shifts in retention times among homologous chemicals shared among samples (Fig~\ref{Fig:Fig2} i). This procedure is implemented for all of the samples in such a way that the number of shared peaks is maximised. The parameter \texttt{max\_linear\_shift} defines the maximum range of linear shifts that are considered by the function. This approach clearly relies on their being a sufficient number of substances shared among the samples. In the absence of shared substances, the function will be unlikely to find a suitable shift and consequently the chromatograms will remain untransformed. By default, a reference is selected automatically by searching for the sample with the highest average similarity to all other samples based on the number of shared peaks prior to alignment. Optionally, the alignment can be implemented using an internal standard (labelled "reference") containing substances that are known \textit{a priori} to occur in most or all of the samples.
-
+}
 \begin{figure}[htbp]
 \centering
 \caption{\textbf{Overview of the alignment algorithm implemented in GCalignR using a hypothetical dataset.}
@@ -431,6 +457,14 @@ The raw fur seal chemical dataset is included in this R package and the bumblebe
 \label{Data S2}
 {\bf Datasets used to generate the results presented in this manuscript.} This is a compressed zip archive that includes all the raw data that were used for the simulations presented in this manuscript. 
 
+\paragraph*{File S3.}
+\label{File S3}
+{\bf A package vignette.} This vignette gives an more detailed introduction into the usage of the package functionalities to tune parameters for aligning peak data.
+
+\paragraph*{File S4.}
+\label{File S4}
+{\bf A package vignette.} This vignette gives an introduction into the concepts of the algorithm and illustrates how each step of the alignment procedure alters the outcome based on simple datasets consisting of simulated chromatograms.
+
 \section*{Acknowledgments}
 We are grateful to Barbara Caspers and Sarah Golüke for helpful discussions during the development of the package. This work was funded by a Deutsche Forschungsgemeinschaft standard Grant HO 5122/3-1 (to J.I.H.).
 
@@ -540,13 +574,18 @@ Wickham H.
 
 
 \bibitem{Wickham.2016}
-Wickham H, Chang W. devtools: Tools to Make Developing R Packages Easier; 2016.
+Wickham H., Chang W. devtools: Tools to Make Developing R Packages Easier; 2016.
 \newblock Available from: \url{https://CRAN.R-project.org/package=devtools}.
 
 \bibitem{Wyatt.2014}
 Wyatt TD.
 \newblock Pheromones and animal behavior: chemical signals and signatures.
 \newblock {Cambridge University Press}; 2014.
+
+\bibitem{Grob.2004}
+Grob, R. L., Kaiser, M. A.
+\newblock “Qualitative and Quantitative Analysis by Gas Chromatography.” In Modern Practice of Gas Chromatography, 403–60.
+\newblock{John Wiley {\&} Sons}; 2004.
 
 \end{thebibliography}
 
